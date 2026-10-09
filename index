@@ -1,0 +1,1737 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Avaliação de Atendimento</title>
+  <style>
+    * {
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: rgba(0,0,0,0);
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+      background-color: #f4f6f9;
+      color: #333333;
+    }
+
+    #app-container {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .secao {
+      display: none;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      padding: 28px 20px;
+      text-align: center;
+      background-color: #ffffff;
+      overflow: hidden;
+    }
+
+    .secao.ativa {
+      display: block;
+    }
+
+    h1.titulo-principal {
+      font-size: 40px;
+      color: #0f172a;
+      margin-top: 15px;
+      margin-bottom: 16px;
+      line-height: 1.25;
+    }
+
+    p.subtitulo {
+      font-size: 24px;
+      color: #475569;
+      line-height: 1.45;
+      max-width: 720px;
+      margin: 0 auto 30px auto;
+    }
+
+    .pergunta-texto {
+      font-size: 34px;
+      font-weight: bold;
+      color: #0f172a;
+      margin-top: 10px;
+      margin-bottom: 18px;
+      line-height: 1.35;
+      min-height: 75px;
+      padding: 0 10px;
+    }
+
+    .area-audio {
+      margin: 0 auto 20px auto;
+      padding: 8px;
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      max-width: 520px;
+    }
+
+    audio {
+      width: 100%;
+      height: 42px;
+    }
+
+    /* Grade de respostas centralizada com folga lateral */
+    .opcoes-respostas {
+      width: 100%;
+      max-width: 960px;
+      margin: 15px auto 25px auto;
+      text-align: center;
+      padding: 0 10px;
+    }
+
+    .opcao-btn {
+      display: inline-block;
+      vertical-align: top;
+      background-color: #ffffff;
+      border: 4px solid #e2e8f0;
+      border-radius: 22px;
+      padding: 24px 12px;
+      cursor: pointer;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.04);
+      -webkit-transition: border-color 0.15s, background-color 0.15s;
+      transition: border-color 0.15s, background-color 0.15s;
+    }
+
+    /* Larguras dinâmicas por quantidade de opções */
+    .opcoes-qtd-2 .opcao-btn {
+      width: 40%;
+      min-width: 180px;
+      margin: 10px 3%;
+    }
+
+    .opcoes-qtd-3 .opcao-btn {
+      width: 28%;
+      min-width: 150px;
+      margin: 8px 2%;
+    }
+
+    .opcoes-qtd-4 .opcao-btn {
+      width: 21%;
+      min-width: 130px;
+      margin: 8px 1.5%;
+    }
+
+    .opcoes-qtd-5 .opcao-btn {
+      width: 17%;
+      min-width: 122px;
+      margin: 8px 1%;
+    }
+
+    .opcao-btn .emoji {
+      font-size: 64px;
+      line-height: 1.1;
+      display: block;
+      margin-bottom: 12px;
+    }
+
+    .opcao-btn .rotulo {
+      display: block;
+      font-size: 20px;
+      font-weight: bold;
+      color: #334155;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .opcao-btn.selecionado {
+      border-color: #0284c7;
+      background-color: #f0f9ff;
+    }
+
+    .opcao-btn.selecionado .rotulo {
+      color: #0284c7;
+    }
+
+    .area-botoes-acao {
+      margin-top: 18px;
+    }
+
+    .btn-acao {
+      display: inline-block;
+      padding: 22px 55px;
+      font-size: 26px;
+      font-weight: bold;
+      color: #ffffff;
+      background-color: #0284c7;
+      border: none;
+      border-radius: 18px;
+      cursor: pointer;
+      text-transform: uppercase;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+
+    .btn-acao:active {
+      opacity: 0.9;
+    }
+
+    .btn-avancar.desativado {
+      opacity: 0.45;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .icone-sucesso {
+      font-size: 88px;
+      color: #16a34a;
+      margin-top: 30px;
+      margin-bottom: 16px;
+    }
+
+    .info-conclusao {
+      font-size: 24px;
+      color: #475569;
+      margin-bottom: 30px;
+      line-height: 1.5;
+    }
+
+    .logo-tela-inicial {
+      max-height: 110px;
+      max-width: 80%;
+      margin: 0 auto 14px auto;
+      display: block;
+      object-fit: contain;
+    }
+
+    .btn-engrenagem-secreta {
+      position: fixed;
+      bottom: 14px;
+      right: 14px;
+      width: 52px;
+      height: 52px;
+      line-height: 52px;
+      text-align: center;
+      background-color: #e2e8f0;
+      border: 1px solid #cbd5e1;
+      border-radius: 26px;
+      color: #475569;
+      opacity: 0.42;
+      cursor: pointer;
+      z-index: 9999;
+      padding: 0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+
+    .btn-engrenagem-secreta svg {
+      vertical-align: middle;
+      display: inline-block;
+    }
+
+    .overlay-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(15, 23, 42, 0.75);
+      z-index: 10000;
+      text-align: center;
+    }
+
+    .caixa-modal-senha {
+      background-color: #ffffff;
+      width: 90%;
+      max-width: 440px;
+      margin: 14% auto 0 auto;
+      padding: 30px 24px;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.35);
+      text-align: center;
+    }
+
+    .input-senha-admin {
+      width: 80%;
+      padding: 14px;
+      font-size: 26px;
+      text-align: center;
+      border: 2px solid #cbd5e1;
+      border-radius: 12px;
+      margin: 18px auto;
+      letter-spacing: 6px;
+      color: #0f172a;
+    }
+
+    .caixa-modal-config {
+      background-color: #ffffff;
+      width: 96%;
+      max-width: 980px;
+      height: 94%;
+      margin: 1.5% auto;
+      border-radius: 20px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      text-align: left;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Cabeçalho com Hamburger Menu */
+    .config-cabecalho-moderno {
+      padding: 16px 24px;
+      background-color: #0f172a;
+      color: #ffffff;
+      border-bottom: 1px solid #1e293b;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-menu-hamburger {
+      float: left;
+      background-color: #1e293b;
+      border: 1px solid #334155;
+      color: #ffffff;
+      font-size: 24px;
+      line-height: 1;
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-right: 16px;
+    }
+
+    .config-header-textos {
+      overflow: hidden;
+    }
+
+    .config-titulo-header {
+      font-size: 20px;
+      font-weight: bold;
+      color: #f8fafc;
+    }
+
+    .config-subtitulo-header {
+      font-size: 13px;
+      color: #94a3b8;
+      margin-top: 3px;
+    }
+
+    /* Drawer / Menu lateral Hamburger */
+    .drawer-menu-admin {
+      display: none;
+      position: absolute;
+      top: 76px;
+      left: 0;
+      width: 280px;
+      bottom: 75px;
+      background-color: #0f172a;
+      border-right: 2px solid #1e293b;
+      z-index: 10500;
+      box-shadow: 10px 0 25px rgba(0,0,0,0.4);
+    }
+
+    .item-menu-drawer {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 18px 24px;
+      font-size: 16px;
+      font-weight: bold;
+      color: #94a3b8;
+      background: none;
+      border: none;
+      border-bottom: 1px solid #1e293b;
+      cursor: pointer;
+    }
+
+    .item-menu-drawer.drawer-ativo {
+      color: #38bdf8;
+      background-color: rgba(56, 189, 248, 0.12);
+      border-left: 5px solid #38bdf8;
+    }
+
+    .config-conteudo-scroll {
+      height: calc(100% - 151px);
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 26px 30px;
+      background-color: #f8fafc;
+    }
+
+    .painel-secao-conteudo {
+      display: none;
+    }
+
+    .painel-secao-conteudo.secao-ativa {
+      display: block;
+    }
+
+    .card-config-moderno {
+      background-color: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 24px 28px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    }
+
+    .card-config-moderno h4 {
+      font-size: 19px;
+      color: #0f172a;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+
+    .card-config-moderno p.descricao-card {
+      font-size: 14px;
+      color: #64748b;
+      margin-bottom: 18px;
+      line-height: 1.45;
+    }
+
+    .linha-campo-form {
+      margin-bottom: 20px;
+    }
+
+    .rotulo-campo-admin {
+      display: block;
+      font-size: 15px;
+      font-weight: bold;
+      color: #334155;
+      margin-bottom: 6px;
+    }
+
+    .input-admin-moderno {
+      width: 100%;
+      padding: 13px 16px;
+      font-size: 16px;
+      color: #0f172a;
+      background-color: #ffffff;
+      border: 2px solid #cbd5e1;
+      border-radius: 10px;
+      font-family: inherit;
+    }
+
+    .btn-preset-cor {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      border: 3px solid #cbd5e1;
+      margin-right: 10px;
+      cursor: pointer;
+      vertical-align: middle;
+    }
+
+    .card-pergunta-item {
+      background-color: #ffffff;
+      border: 2px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .badge-pergunta-numero {
+      float: left;
+      font-size: 17px;
+      font-weight: bold;
+      color: #0f172a;
+      line-height: 34px;
+    }
+
+    .btn-remover-pergunta-admin {
+      float: right;
+      background-color: #fee2e2;
+      color: #dc2626;
+      border: 1px solid #fecaca;
+      border-radius: 8px;
+      padding: 7px 16px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .faixa-audio-config {
+      background-color: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 14px;
+      margin-bottom: 18px;
+    }
+
+    .btn-secundario-admin {
+      display: inline-block;
+      padding: 10px 18px;
+      font-size: 14px;
+      font-weight: bold;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      cursor: pointer;
+      margin-right: 8px;
+      margin-top: 6px;
+      background-color: #ffffff;
+      color: #334155;
+      text-decoration: none;
+    }
+
+    .btn-azul-admin {
+      background-color: #0284c7;
+      color: #ffffff;
+      border-color: #0284c7;
+    }
+
+    .grid-opcoes-edicao {
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .card-opcao-edicao-col {
+      display: inline-block;
+      vertical-align: top;
+      background-color: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 12px 8px;
+      margin: 6px 1%;
+    }
+
+    .input-emoji-edicao {
+      width: 100%;
+      text-align: center;
+      font-size: 32px;
+      padding: 6px 2px;
+      border: 2px solid #cbd5e1;
+      border-radius: 10px;
+      background-color: #ffffff;
+      margin-bottom: 8px;
+    }
+
+    .input-rotulo-edicao {
+      width: 100%;
+      text-align: center;
+      font-size: 14px;
+      font-weight: bold;
+      padding: 8px 4px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      background-color: #ffffff;
+    }
+
+    .bloco-controle-fonte {
+      display: inline-block;
+      margin-top: 10px;
+    }
+
+    .btn-ajuste-fonte {
+      background-color: #0284c7;
+      color: #ffffff;
+      border: none;
+      font-size: 26px;
+      font-weight: bold;
+      width: 54px;
+      height: 50px;
+      border-radius: 12px;
+      cursor: pointer;
+      vertical-align: middle;
+    }
+
+    .valor-fonte-exibicao {
+      font-size: 22px;
+      font-weight: bold;
+      margin: 0 18px;
+      display: inline-block;
+      min-width: 75px;
+      text-align: center;
+      vertical-align: middle;
+      color: #0f172a;
+    }
+
+    /* Rodapé com Assinatura da Iniciativa DOCA */
+    .config-rodape-moderno {
+      padding: 14px 24px;
+      background-color: #ffffff;
+      border-top: 1px solid #e2e8f0;
+      height: 75px;
+      position: relative;
+    }
+
+    .rodape-assinatura-doca {
+      float: left;
+      line-height: 46px;
+      font-size: 13px;
+      font-weight: bold;
+      color: #64748b;
+      letter-spacing: 0.3px;
+    }
+
+    .rodape-botoes-direita {
+      float: right;
+    }
+
+    .btn-fechar-dialogo {
+      background-color: #64748b;
+      color: #ffffff;
+      border: none;
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-right: 12px;
+    }
+
+    .btn-salvar-dialogo {
+      background-color: #16a34a;
+      color: #ffffff;
+      border: none;
+      padding: 12px 28px;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .toast-notificacao {
+      display: none;
+      position: fixed;
+      bottom: 75px;
+      left: 50%;
+      transform: translateX(-50%);
+      -webkit-transform: translateX(-50%);
+      background-color: #0f172a;
+      color: #ffffff;
+      padding: 14px 24px;
+      font-size: 17px;
+      border-radius: 10px;
+      z-index: 20000;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      max-width: 90%;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="app-container">
+
+    <!-- SEÇÃO 1: TELA INICIAL DO RESPONDENTE -->
+    <div id="secao-1" class="secao ativa">
+      <div id="bloco-logo-inicial" style="display: none; margin-top: 10px; margin-bottom: 15px;">
+        <img id="img-logo-inicial" class="logo-tela-inicial" src="" alt="Logo" />
+      </div>
+      <h1 id="titulo-tela-inicial" class="titulo-principal">Pesquisa de Satisfação</h1>
+      <p id="subtitulo-tela-inicial" class="subtitulo">
+        Sua opinião é fundamental para aprimorarmos nosso atendimento.<br>
+        O questionário é rápido e leva menos de 1 minuto.
+      </p>
+
+      <div style="margin-top: 35px;">
+        <button id="btn-iniciar" class="btn-acao btn-primario-kiosk" type="button">
+          TOQUE PARA INICIAR
+        </button>
+      </div>
+    </div>
+
+    <!-- SEÇÃO DE PERGUNTAS -->
+    <div id="secao-pergunta" class="secao">
+      
+      <div id="texto-pergunta" class="pergunta-texto">
+        Carregando...
+      </div>
+
+      <div class="area-audio">
+        <audio id="player-visivel" controls preload="auto">
+          Seu navegador não suporta áudio.
+        </audio>
+      </div>
+
+      <div id="container-respostas-dinamico" class="opcoes-respostas"></div>
+
+      <div class="area-botoes-acao">
+        <button id="btn-avancar" class="btn-acao btn-primario-kiosk btn-avancar desativado" type="button" onclick="avancarPergunta()">
+          AVANÇAR &rarr;
+        </button>
+      </div>
+
+    </div>
+
+    <!-- SEÇÃO FINAL: CONCLUSÃO -->
+    <div id="secao-final" class="secao">
+      <div class="icone-sucesso">&#10004;</div>
+      <h1 class="titulo-principal" style="margin-top: 10px;">Muito Obrigado!</h1>
+      <p class="info-conclusao">
+        Sua avaliação foi registrada com sucesso.<br>
+        Ela é muito importante para continuarmos melhorando nosso serviço.
+      </p>
+
+      <div class="area-botoes-acao">
+        <button class="btn-acao btn-primario-kiosk" type="button" onclick="reiniciarPesquisa()">
+          NOVA AVALIAÇÃO
+        </button>
+      </div>
+    </div>
+
+    <!-- Botão de Acesso Administrativo -->
+    <button id="btn-engrenagem" class="btn-engrenagem-secreta" type="button" onclick="tocarEngrenagem(event)">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+      </svg>
+    </button>
+
+    <!-- Modal de Senha com Verificação Local e em Nuvem -->
+    <div id="modal-senha-admin" class="overlay-modal">
+      <div class="caixa-modal-senha">
+        <h2 style="font-size:24px; color:#0f172a; margin-bottom:8px;">Acesso Administrativo</h2>
+        <p style="color: #64748b; font-size: 15px;">Digite a senha definida na Planilha Google:</p>
+        <input id="input-senha-tentativa" class="input-senha-admin" type="password" maxlength="16" placeholder="****" />
+        <div style="margin-top: 15px;">
+          <button class="btn-fechar-dialogo" type="button" onclick="fecharModalSenha()">Cancelar</button>
+          <button class="btn-salvar-dialogo" type="button" onclick="confirmarSenhaAdmin()">Entrar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de Configurações com Hamburger Menu -->
+    <div id="modal-configuracoes" class="overlay-modal">
+      <div class="caixa-modal-config">
+        
+        <!-- Cabeçalho com botão Hamburger -->
+        <div class="config-cabecalho-moderno">
+          <button class="btn-menu-hamburger" type="button" onclick="alternarDrawerMenu()">&#9776;</button>
+          <div class="config-header-textos">
+            <div id="titulo-secao-ativa" class="config-titulo-header">Identidade &amp; Cores</div>
+            <div class="config-subtitulo-header">Toque no menu ☰ para navegar pelas opções do totem</div>
+          </div>
+        </div>
+
+        <!-- Drawer Lateral do Hamburger Menu -->
+        <div id="drawer-menu-admin" class="drawer-menu-admin">
+          <button id="menu-item-identidade" class="item-menu-drawer drawer-ativo" type="button" onclick="selecionarSecaoMenu('identidade', 'Identidade & Cores')">
+            &#127912; Identidade &amp; Cores
+          </button>
+          <button id="menu-item-perguntas" class="item-menu-drawer" type="button" onclick="selecionarSecaoMenu('perguntas', 'Perguntas & Áudios (Drive)')">
+            &#10067; Perguntas &amp; Áudios
+          </button>
+          <button id="menu-item-acessibilidade" class="item-menu-drawer" type="button" onclick="selecionarSecaoMenu('acessibilidade', 'Acessibilidade')">
+            &#128269; Acessibilidade
+          </button>
+          <button id="menu-item-seguranca" class="item-menu-drawer" type="button" onclick="selecionarSecaoMenu('seguranca', 'Senha & Segurança (Planilha)')">
+            &#128274; Senha &amp; Segurança
+          </button>
+          <button id="menu-item-nuvem" class="item-menu-drawer" type="button" onclick="selecionarSecaoMenu('nuvem', 'Google Sheets & Nuvem')">
+            &#9729; Google Sheets &amp; Nuvem
+          </button>
+        </div>
+
+        <!-- Conteúdo Scrollável -->
+        <div class="config-conteudo-scroll" onclick="fecharDrawerSeAberto()">
+          
+          <!-- SEÇÃO 1: IDENTIDADE & CORES -->
+          <div id="secao-cfg-identidade" class="painel-secao-conteudo secao-ativa">
+            <div class="card-config-moderno">
+              <h4>Cor dos Botões de Ação</h4>
+              <p class="descricao-card">Escolha a cor principal dos botões interativos.</p>
+              
+              <div class="linha-campo-form">
+                <input id="cfg-cor-botao" type="text" class="input-admin-moderno" style="width: 170px; display: inline-block; vertical-align: middle;" value="#0284c7" />
+                <input id="cfg-picker-botao" type="color" value="#0284c7" style="width: 52px; height: 48px; vertical-align: middle; border: 2px solid #cbd5e1; border-radius: 10px; cursor: pointer; margin-left: 8px;" onchange="sincronizarCorBotaoPicker(this.value)" />
+              </div>
+
+              <div>
+                <span class="btn-preset-cor" style="background-color: #0284c7;" onclick="definirCorBotaoPreset('#0284c7')"></span>
+                <span class="btn-preset-cor" style="background-color: #16a34a;" onclick="definirCorBotaoPreset('#16a34a')"></span>
+                <span class="btn-preset-cor" style="background-color: #4f46e5;" onclick="definirCorBotaoPreset('#4f46e5')"></span>
+                <span class="btn-preset-cor" style="background-color: #ea580c;" onclick="definirCorBotaoPreset('#ea580c')"></span>
+                <span class="btn-preset-cor" style="background-color: #0f172a;" onclick="definirCorBotaoPreset('#0f172a')"></span>
+              </div>
+            </div>
+
+            <div class="card-config-moderno">
+              <h4>Cor de Fundo da Aplicação</h4>
+              <p class="descricao-card">Defina a cor exibida no fundo de todas as seções do tablet.</p>
+              
+              <div class="linha-campo-form">
+                <input id="cfg-cor-fundo" type="text" class="input-admin-moderno" style="width: 170px; display: inline-block; vertical-align: middle;" value="#f4f6f9" />
+                <input id="cfg-picker-fundo" type="color" value="#f4f6f9" style="width: 52px; height: 48px; vertical-align: middle; border: 2px solid #cbd5e1; border-radius: 10px; cursor: pointer; margin-left: 8px;" onchange="sincronizarCorFundoPicker(this.value)" />
+              </div>
+            </div>
+
+            <div class="card-config-moderno">
+              <h4>Logotipo e Mensagem Inicial</h4>
+              <p class="descricao-card">Faça o upload do logo para a pasta do Google Drive ou use um link direto.</p>
+
+              <div class="linha-campo-form">
+                <label class="rotulo-campo-admin">URL da Imagem / Logo:</label>
+                <input id="cfg-logo-url" type="text" class="input-admin-moderno" placeholder="https://..." />
+                <div style="margin-top: 8px;">
+                  <button type="button" class="btn-secundario-admin btn-azul-admin" onclick="document.getElementById('cfg-logo-arquivo').click()">&#128194; Enviar Imagem para o Drive</button>
+                  <button type="button" class="btn-secundario-admin" onclick="removerLogoConfig()">Remover Imagem</button>
+                  <input id="cfg-logo-arquivo" type="file" accept="image/*" style="display:none;" onchange="enviarLogoParaGoogleDrive(this)" />
+                </div>
+              </div>
+
+              <div class="linha-campo-form">
+                <label class="rotulo-campo-admin">Título da Tela Inicial:</label>
+                <input id="cfg-titulo-inicial" type="text" class="input-admin-moderno" value="Pesquisa de Satisfação" />
+              </div>
+
+              <div class="linha-campo-form">
+                <label class="rotulo-campo-admin">Subtítulo Explicativo:</label>
+                <textarea id="cfg-subtitulo-inicial" class="input-admin-moderno" rows="3" style="height: 85px; resize: vertical;"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- SEÇÃO 2: PERGUNTAS & ÁUDIOS (DRIVE) -->
+          <div id="secao-cfg-perguntas" class="painel-secao-conteudo">
+            <div class="card-config-moderno">
+              <h4>Questionário e Opções Flexíveis</h4>
+              <p class="descricao-card">Configure quantas opções cada pergunta terá (ex: 2 para Sim/Não ou 5 para notas completas).</p>
+              
+              <div id="lista-perguntas-edicao"></div>
+
+              <div style="text-align: center; margin-top: 20px;">
+                <button type="button" class="btn-secundario-admin btn-azul-admin" style="font-size: 16px; padding: 14px 28px; border-radius: 12px;" onclick="adicionarNovaPergunta()">
+                  + Adicionar Nova Pergunta
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- SEÇÃO 3: ACESSIBILIDADE & TIPOGRAFIA -->
+          <div id="secao-cfg-acessibilidade" class="painel-secao-conteudo">
+            <div class="card-config-moderno">
+              <h4>Escala Tipográfica Geral</h4>
+              <p class="descricao-card">Aumente ou diminua os textos e emojis em todo o totem.</p>
+              
+              <div class="bloco-controle-fonte">
+                <button class="btn-ajuste-fonte" type="button" onclick="alterarEscalaFonte(-10)">-</button>
+                <span id="valor-escala-fonte" class="valor-fonte-exibicao">100%</span>
+                <button class="btn-ajuste-fonte" type="button" onclick="alterarEscalaFonte(10)">+</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- SEÇÃO 4: SENHA & SEGURANÇA (PLANILHA) -->
+          <div id="secao-cfg-seguranca" class="painel-secao-conteudo">
+            <div class="card-config-moderno">
+              <h4>Senha do Painel Administrativo</h4>
+              <p class="descricao-card">Você pode alterar a senha digitando abaixo ou editando a célula <strong>B2</strong> na aba <strong>Configurações</strong> da sua Planilha Google.</p>
+              
+              <div class="linha-campo-form">
+                <label class="rotulo-campo-admin">Senha de Acesso (Célula B2 da Planilha):</label>
+                <input id="cfg-senha-admin" type="text" class="input-admin-moderno" style="max-width: 260px; font-size: 22px; font-weight: bold; letter-spacing: 3px; color: #0284c7;" value="1234" />
+              </div>
+            </div>
+
+            <div class="card-config-moderno" style="background-color: #f0fdf4; border: 1px solid #bbf7d0;">
+              <h4 style="color: #166534;">Como alterar a senha diretamente na Planilha</h4>
+              <p class="descricao-card" style="color: #15803d; margin-bottom: 12px;">
+                A senha é mantida no Google Sheets para que você possa alterá-la de qualquer lugar (computador ou celular) sem precisar acessar fisicamente o totem.
+              </p>
+              <div style="font-size: 14px; color: #166534; line-height: 1.6; margin-bottom: 16px;">
+                1. Toque no botão abaixo para abrir a Planilha do Google.<br>
+                2. Selecione a aba chamada <strong>"Configurações"</strong> no rodapé da planilha.<br>
+                3. Altere o valor na célula <strong>B2</strong> (marcada em destaque amarelo).<br>
+                <em>Pronto! O tablet passa a exigir a nova senha imediatamente.</em>
+              </div>
+              <a id="link-planilha-google-senha" class="btn-secundario-admin btn-azul-admin" style="font-size: 14px; padding: 12px 20px; display:inline-block;" href="#" target="_blank">
+                &#128196; Abrir Aba de Configurações na Planilha
+              </a>
+            </div>
+          </div>
+
+          <!-- SEÇÃO 5: GOOGLE SHEETS & NUVEM -->
+          <div id="secao-cfg-nuvem" class="painel-secao-conteudo">
+            <div class="card-config-moderno">
+              <h4>Conexão em Tempo Real com o Google</h4>
+              <p class="descricao-card">As avaliações são enviadas para a Planilha do Google Sheets gerada pelo Apps Script.</p>
+              
+              <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 18px; margin-bottom: 20px;">
+                <div id="status-conexao-nuvem" style="font-size: 18px; font-weight: bold; color: #166534;">Conectado ao Google Workspace</div>
+                <div id="contador-registros-nuvem" style="font-size: 14px; color: #15803d; margin-top: 4px;">Carregando total de respostas...</div>
+              </div>
+
+              <div style="margin-top: 15px;">
+                <a id="link-planilha-google" class="btn-secundario-admin btn-azul-admin" style="font-size: 15px; padding: 14px 20px; display:inline-block;" href="#" target="_blank">
+                  &#128196; Abrir Planilha Google Sheets
+                </a>
+                <a id="link-pasta-drive" class="btn-secundario-admin" style="font-size: 15px; padding: 14px 20px; display:inline-block;" href="#" target="_blank">
+                  &#128194; Abrir Pasta de Mídias no Drive
+                </a>
+              </div>
+            </div>
+
+            <div class="card-config-moderno">
+              <h4>Sincronização do Armazenamento Local</h4>
+              <p class="descricao-card">Caso o Wi-Fi oscile, as avaliações são retidas no tablet e podem ser reenviadas.</p>
+              <button class="btn-secundario-admin" type="button" onclick="sincronizarFilaPendente()">
+                &#128257; Sincronizar Fila Offline Agora
+              </button>
+              <button class="btn-secundario-admin" style="color: #dc2626; border-color: #fca5a5;" type="button" onclick="limparFilaLocal()">
+                Esvaziar Fila Local
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Rodapé do Modal com Assinatura Iniciativa DOCA -->
+        <div class="config-rodape-moderno">
+          <div class="rodape-assinatura-doca">Uma solução Iniciativa DOCA - 2026</div>
+          <div class="rodape-botoes-direita">
+            <button class="btn-fechar-dialogo" type="button" onclick="fecharModalConfig()">Cancelar</button>
+            <button class="btn-salvar-dialogo" type="button" onclick="salvarConfiguracoesAdmin()">Salvar e Aplicar</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div id="toast-aviso" class="toast-notificacao"></div>
+
+  </div>
+
+  <script>
+    /*
+     * SISTEMA DE TOTEM - COMPATÍVEL COM ANDROID 4 E WEBKIT LEGADO
+     * Pré-carregamento de áudio ativo para reprodução instantânea (Cache).
+     * Sincronização da senha com a aba 'Configurações' do Google Sheets.
+     */
+
+    var configSistema = {
+      escalaFonte: 100,
+      senhaAdmin: "1234",
+      corFundo: "#f4f6f9",
+      corBotao: "#0284c7",
+      tituloInicial: "Pesquisa de Satisfação",
+      subtituloInicial: "Sua opinião é fundamental para aprimorarmos nosso atendimento.\nO questionário é rápido e leva menos de 1 minuto.",
+      logoUrl: "",
+      perguntas: []
+    };
+
+    var perguntas = [];
+    var indiceAtual = 0;
+    var respostaSelecionada = null;
+    var avaliacaoAtual = {
+      data_hora: "",
+      respostas: []
+    };
+
+    var cacheAudiosMemoria = {};
+
+    function preCarregarAudiosEmCache() {
+      if (!perguntas || !perguntas.length) return;
+      for (var i = 0; i < perguntas.length; i++) {
+        var src = perguntas[i].audio || (i + 1) + '.mp3';
+        if (src && !cacheAudiosMemoria[src]) {
+          try {
+            var aud = new Audio();
+            aud.preload = "auto";
+            aud.src = src;
+            cacheAudiosMemoria[src] = aud;
+          } catch (e) {}
+        }
+      }
+    }
+
+    function mostrarMensagem(texto) {
+      var toast = document.getElementById('toast-aviso');
+      if (toast) {
+        toast.innerHTML = texto;
+        toast.style.display = 'block';
+        setTimeout(function() {
+          toast.style.display = 'none';
+        }, 3400);
+      }
+    }
+
+    function normalizarOpcoesPergunta(p) {
+      if (p.opcoes && p.opcoes.length) return p.opcoes;
+      var arr = [];
+      var ems = p.emojis || ["😡", "🙁", "😐", "🙂", "😃"];
+      var rots = p.rotulos || ["Péssimo", "Ruim", "Regular", "Bom", "Excelente"];
+      var qtd = Math.min(ems.length, rots.length);
+      for (var j = 0; j < qtd; j++) {
+        arr.push({
+          valor: j + 1,
+          rotulo: rots[j],
+          emoji: ems[j]
+        });
+      }
+      p.opcoes = arr;
+      return arr;
+    }
+
+    function carregarDadosDoBackend() {
+      try {
+        var cache = window.localStorage.getItem('config_totem_appscript');
+        if (cache) {
+          configSistema = JSON.parse(cache);
+          for (var k = 0; k < configSistema.perguntas.length; k++) {
+            normalizarOpcoesPergunta(configSistema.perguntas[k]);
+          }
+          perguntas = configSistema.perguntas;
+          aplicarTamanhoFonte(configSistema.escalaFonte || 100);
+          aplicarConfiguracoesVisuais();
+          preCarregarAudiosEmCache();
+        }
+      } catch (e) {}
+
+      if (typeof google !== 'undefined' && google.script && google.script.run) {
+        google.script.run
+          .withSuccessHandler(function(remoto) {
+            if (remoto && remoto.perguntas && remoto.perguntas.length) {
+              for (var i = 0; i < remoto.perguntas.length; i++) {
+                normalizarOpcoesPergunta(remoto.perguntas[i]);
+              }
+              configSistema = remoto;
+              perguntas = configSistema.perguntas;
+              try {
+                window.localStorage.setItem('config_totem_appscript', JSON.stringify(remoto));
+              } catch (e) {}
+              aplicarTamanhoFonte(configSistema.escalaFonte || 100);
+              aplicarConfiguracoesVisuais();
+              preCarregarAudiosEmCache();
+            }
+          })
+          .withFailureHandler(function() {
+            mostrarMensagem("Aviso: Operando em modo offline.");
+          })
+          .obterConfiguracoesIniciais();
+      }
+    }
+
+    function aplicarConfiguracoesVisuais() {
+      var corFundo = configSistema.corFundo || '#f4f6f9';
+      document.body.style.backgroundColor = corFundo;
+      var secoes = document.getElementsByClassName('secao');
+      for (var s = 0; s < secoes.length; s++) {
+        secoes[s].style.backgroundColor = corFundo;
+      }
+
+      var corBotao = configSistema.corBotao || '#0284c7';
+      var tagEstiloBotoes = document.getElementById('estilo-botoes-dinamico');
+      if (!tagEstiloBotoes) {
+        tagEstiloBotoes = document.createElement('style');
+        tagEstiloBotoes.id = 'estilo-botoes-dinamico';
+        document.head.appendChild(tagEstiloBotoes);
+      }
+      tagEstiloBotoes.innerHTML = 
+        '.btn-primario-kiosk { background-color: ' + corBotao + ' !important; } ' +
+        '.opcao-btn.selecionado { border-color: ' + corBotao + ' !important; } ' +
+        '.opcao-btn.selecionado .rotulo { color: ' + corBotao + ' !important; }';
+
+      var elTitulo = document.getElementById('titulo-tela-inicial');
+      if (elTitulo) elTitulo.innerHTML = configSistema.tituloInicial || 'Pesquisa de Satisfação';
+
+      var elSubtitulo = document.getElementById('subtitulo-tela-inicial');
+      if (elSubtitulo) {
+        var subFormatado = (configSistema.subtituloInicial || '').replace(/\n/g, '<br>');
+        elSubtitulo.innerHTML = subFormatado;
+      }
+
+      var blocoLogo = document.getElementById('bloco-logo-inicial');
+      var imgLogo = document.getElementById('img-logo-inicial');
+      if (blocoLogo && imgLogo) {
+        if (configSistema.logoUrl && configSistema.logoUrl.trim() !== '') {
+          imgLogo.src = configSistema.logoUrl;
+          blocoLogo.style.display = 'block';
+        } else {
+          blocoLogo.style.display = 'none';
+          imgLogo.src = '';
+        }
+      }
+    }
+
+    function obterDataHoraAtual() {
+      var d = new Date();
+      var pad = function(n) { return n < 10 ? '0' + n : n; };
+      return d.getFullYear() + '-' +
+        pad(d.getMonth() + 1) + '-' +
+        pad(d.getDate()) + ' ' +
+        pad(d.getHours()) + ':' +
+        pad(d.getMinutes()) + ':' +
+        pad(d.getSeconds());
+    }
+
+    function iniciarPesquisa() {
+      if (!perguntas || perguntas.length === 0) {
+        mostrarMensagem('Nenhuma pergunta configurada.');
+        return;
+      }
+
+      indiceAtual = 0;
+      respostaSelecionada = null;
+      avaliacaoAtual = {
+        data_hora: obterDataHoraAtual(),
+        respostas: []
+      };
+
+      document.getElementById('secao-1').className = 'secao';
+      document.getElementById('secao-final').className = 'secao';
+      document.getElementById('secao-pergunta').className = 'secao ativa';
+
+      carregarPergunta(indiceAtual);
+    }
+
+    var btnIniciar = document.getElementById('btn-iniciar');
+    btnIniciar.addEventListener('click', iniciarPesquisa, false);
+    btnIniciar.addEventListener('touchend', function(e) {
+      iniciarPesquisa();
+      e.preventDefault();
+    }, false);
+
+    function carregarPergunta(indice) {
+      respostaSelecionada = null;
+
+      var btnAvancar = document.getElementById('btn-avancar');
+      btnAvancar.className = 'btn-acao btn-primario-kiosk btn-avancar desativado';
+
+      var p = perguntas[indice];
+      normalizarOpcoesPergunta(p);
+
+      var textoPuro = p.texto.replace(/^\d+[\.\-\)]\s*/, '');
+      document.getElementById('texto-pergunta').innerHTML = '(' + (indice + 1) + '/' + perguntas.length + ') ' + textoPuro;
+
+      var container = document.getElementById('container-respostas-dinamico');
+      var qtd = p.opcoes.length;
+      container.className = 'opcoes-respostas opcoes-qtd-' + (qtd > 5 ? 5 : qtd);
+
+      var html = '';
+      for (var i = 0; i < qtd; i++) {
+        var op = p.opcoes[i];
+        var rotuloFormatado = (qtd > 2 ? op.valor + ' - ' : '') + op.rotulo;
+        html += '<div class="opcao-btn" id="opcao-btn-' + i + '" onclick="selecionarOpcao(' + i + ')">';
+        html += '<span class="emoji">' + op.emoji + '</span>';
+        html += '<span class="rotulo">' + rotuloFormatado + '</span>';
+        html += '</div>';
+      }
+      container.innerHTML = html;
+
+      tocarAudioPergunta(p.audio || (indice + 1) + '.mp3');
+    }
+
+    function tocarAudioPergunta(fonte) {
+      try {
+        var player = document.getElementById('player-visivel');
+        if (player && fonte) {
+          player.pause();
+          player.src = fonte;
+          player.load();
+          player.play();
+        }
+      } catch (e) {}
+    }
+
+    function selecionarOpcao(indiceOpcao) {
+      var p = perguntas[indiceAtual];
+      var op = p.opcoes[indiceOpcao];
+      var rotuloFormatado = (p.opcoes.length > 2 ? op.valor + ' - ' : '') + op.rotulo;
+
+      respostaSelecionada = {
+        pergunta_id: p.id || (indiceAtual + 1),
+        pergunta: p.texto,
+        valor: op.valor,
+        rotulo: op.rotulo,
+        rotuloCompleto: rotuloFormatado,
+        emoji: op.emoji
+      };
+
+      var botoes = document.getElementsByClassName('opcao-btn');
+      for (var i = 0; i < botoes.length; i++) {
+        botoes[i].className = 'opcao-btn' + (i === indiceOpcao ? ' selecionado' : '');
+      }
+
+      var btnAvancar = document.getElementById('btn-avancar');
+      btnAvancar.className = 'btn-acao btn-primario-kiosk btn-avancar';
+    }
+
+    function avancarPergunta() {
+      if (!respostaSelecionada) {
+        mostrarMensagem('Toque em uma opção para continuar.');
+        return;
+      }
+
+      avaliacaoAtual.respostas.push(respostaSelecionada);
+
+      try {
+        var player = document.getElementById('player-visivel');
+        if (player) player.pause();
+      } catch (e) {}
+
+      indiceAtual++;
+
+      if (indiceAtual < perguntas.length) {
+        carregarPergunta(indiceAtual);
+      } else {
+        finalizarPesquisa();
+      }
+    }
+
+    function finalizarPesquisa() {
+      guardarFilaLocal(avaliacaoAtual);
+
+      if (typeof google !== 'undefined' && google.script && google.script.run) {
+        google.script.run
+          .withSuccessHandler(function() {
+            removerItemFilaLocal(avaliacaoAtual.data_hora);
+          })
+          .registrarAvaliacao(avaliacaoAtual);
+      }
+
+      document.getElementById('secao-pergunta').className = 'secao';
+      document.getElementById('secao-final').className = 'secao ativa';
+
+      setTimeout(function() {
+        var secaoFinal = document.getElementById('secao-final');
+        if (secaoFinal.className.indexOf('ativa') !== -1) reiniciarPesquisa();
+      }, 5000);
+    }
+
+    function guardarFilaLocal(dados) {
+      try {
+        var lista = [];
+        var armazenado = window.localStorage.getItem('avaliacoes_fila_pendente');
+        if (armazenado) lista = JSON.parse(armazenado);
+        lista.push(dados);
+        window.localStorage.setItem('avaliacoes_fila_pendente', JSON.stringify(lista));
+      } catch (e) {}
+    }
+
+    function removerItemFilaLocal(dataHora) {
+      try {
+        var armazenado = window.localStorage.getItem('avaliacoes_fila_pendente');
+        if (!armazenado) return;
+        var lista = JSON.parse(armazenado);
+        var filtrado = [];
+        for (var i = 0; i < lista.length; i++) {
+          if (lista[i].data_hora !== dataHora) filtrado.push(lista[i]);
+        }
+        window.localStorage.setItem('avaliacoes_fila_pendente', JSON.stringify(filtrado));
+      } catch (e) {}
+    }
+
+    function reiniciarPesquisa() {
+      try {
+        var player = document.getElementById('player-visivel');
+        if (player) player.pause();
+      } catch (e) {}
+      document.getElementById('secao-final').className = 'secao';
+      document.getElementById('secao-pergunta').className = 'secao';
+      document.getElementById('secao-1').className = 'secao ativa';
+    }
+
+    var contagemToquesEngrenagem = 0;
+    var timerToquesEngrenagem = null;
+    var ultimoTimestampEngrenagem = 0;
+
+    function tocarEngrenagem(e) {
+      if (e && e.type === 'touchend') e.preventDefault();
+      var agora = new Date().getTime();
+      if (agora - ultimoTimestampEngrenagem < 120) return;
+      ultimoTimestampEngrenagem = agora;
+
+      contagemToquesEngrenagem++;
+      if (timerToquesEngrenagem) clearTimeout(timerToquesEngrenagem);
+
+      if (contagemToquesEngrenagem >= 3) {
+        contagemToquesEngrenagem = 0;
+        abrirModalSenha();
+      } else {
+        timerToquesEngrenagem = setTimeout(function() {
+          contagemToquesEngrenagem = 0;
+        }, 2200);
+      }
+    }
+
+    var btnEng = document.getElementById('btn-engrenagem');
+    if (btnEng) {
+      btnEng.addEventListener('touchend', function(e) {
+        tocarEngrenagem(e);
+      }, false);
+    }
+
+    function abrirModalSenha() {
+      var input = document.getElementById('input-senha-tentativa');
+      if (input) input.value = '';
+      document.getElementById('modal-senha-admin').style.display = 'block';
+    }
+
+    function fecharModalSenha() {
+      document.getElementById('modal-senha-admin').style.display = 'none';
+    }
+
+    /**
+     * Valida a senha comparando primeiro o cache local e, caso discorde, consultando a Planilha Google em tempo real.
+     */
+    function confirmarSenhaAdmin() {
+      var input = document.getElementById('input-senha-tentativa');
+      var digitada = input ? input.value.trim() : '';
+      if (!digitada) {
+        mostrarMensagem('Digite a senha para continuar.');
+        return;
+      }
+
+      // 1. Verificação rápida com o valor armazenado localmente
+      if (digitada === String(configSistema.senhaAdmin).trim()) {
+        fecharModalSenha();
+        abrirModalConfig();
+        return;
+      }
+
+      // 2. Se a senha local falhar ou tiver sido alterada na Planilha, consulta a nuvem em tempo real
+      if (typeof google !== 'undefined' && google.script && google.script.run) {
+        mostrarMensagem('Validando senha com a Planilha Google...');
+        google.script.run
+          .withSuccessHandler(function(res) {
+            if (res && res.valida) {
+              configSistema.senhaAdmin = digitada;
+              try {
+                window.localStorage.setItem('config_totem_appscript', JSON.stringify(configSistema));
+              } catch (e) {}
+              fecharModalSenha();
+              abrirModalConfig();
+            } else {
+              mostrarMensagem('Senha incorreta. Verifique na célula B2 da Planilha.');
+            }
+          })
+          .withFailureHandler(function() {
+            mostrarMensagem('Senha incorreta. Não foi possível conectar ao Google.');
+          })
+          .validarSenhaPlanilha(digitada);
+      } else {
+        mostrarMensagem('Senha incorreta.');
+      }
+    }
+
+    /* Modal de Configuração com Hamburger Menu */
+    function abrirModalConfig() {
+      document.getElementById('cfg-cor-botao').value = configSistema.corBotao || '#0284c7';
+      document.getElementById('cfg-picker-botao').value = configSistema.corBotao || '#0284c7';
+      document.getElementById('cfg-cor-fundo').value = configSistema.corFundo || '#f4f6f9';
+      document.getElementById('cfg-picker-fundo').value = configSistema.corFundo || '#f4f6f9';
+      document.getElementById('cfg-logo-url').value = configSistema.logoUrl || '';
+      document.getElementById('cfg-titulo-inicial').value = configSistema.tituloInicial || 'Pesquisa de Satisfação';
+      document.getElementById('cfg-subtitulo-inicial').value = configSistema.subtituloInicial || '';
+      document.getElementById('cfg-senha-admin').value = configSistema.senhaAdmin || '1234';
+
+      montarFormularioEdicaoPerguntas();
+      selecionarSecaoMenu('identidade', 'Identidade & Cores');
+      atualizarLinksGoogleNuvem();
+
+      document.getElementById('modal-configuracoes').style.display = 'block';
+    }
+
+    function fecharModalConfig() {
+      document.getElementById('modal-configuracoes').style.display = 'none';
+      fecharDrawerSeAberto();
+    }
+
+    function alternarDrawerMenu() {
+      var drawer = document.getElementById('drawer-menu-admin');
+      if (!drawer) return;
+      drawer.style.display = (drawer.style.display === 'block') ? 'none' : 'block';
+    }
+
+    function fecharDrawerSeAberto() {
+      var drawer = document.getElementById('drawer-menu-admin');
+      if (drawer) drawer.style.display = 'none';
+    }
+
+    function selecionarSecaoMenu(chaveSecao, tituloLegivel) {
+      var secoes = ['identidade', 'perguntas', 'acessibilidade', 'seguranca', 'nuvem'];
+      for (var i = 0; i < secoes.length; i++) {
+        var s = secoes[i];
+        var itemBtn = document.getElementById('menu-item-' + s);
+        var painel = document.getElementById('secao-cfg-' + s);
+        if (itemBtn) itemBtn.className = 'item-menu-drawer' + (s === chaveSecao ? ' drawer-ativo' : '');
+        if (painel) painel.className = 'painel-secao-conteudo' + (s === chaveSecao ? ' secao-ativa' : '');
+      }
+
+      var elTitulo = document.getElementById('titulo-secao-ativa');
+      if (elTitulo) elTitulo.innerHTML = tituloLegivel;
+
+      fecharDrawerSeAberto();
+      if (chaveSecao === 'nuvem' || chaveSecao === 'seguranca') atualizarLinksGoogleNuvem();
+    }
+
+    function atualizarLinksGoogleNuvem() {
+      if (typeof google !== 'undefined' && google.script && google.script.run) {
+        google.script.run
+          .withSuccessHandler(function(info) {
+            if (info) {
+              var elLinkP = document.getElementById('link-planilha-google');
+              var elLinkD = document.getElementById('link-pasta-drive');
+              var elLinkPS = document.getElementById('link-planilha-google-senha');
+              var elCont = document.getElementById('contador-registros-nuvem');
+
+              if (elLinkP && info.urlPlanilha) elLinkP.href = info.urlPlanilha;
+              if (elLinkPS && info.urlPlanilha) elLinkPS.href = info.urlPlanilha;
+              if (elLinkD && info.urlPastaDrive) elLinkD.href = info.urlPastaDrive;
+              if (elCont) elCont.innerHTML = 'Total registrado no Sheets: ' + info.totalRespostas + ' avaliação(ões)';
+
+              if (info.senhaAtual) {
+                configSistema.senhaAdmin = info.senhaAtual;
+                var campoSenha = document.getElementById('cfg-senha-admin');
+                if (campoSenha) campoSenha.value = info.senhaAtual;
+              }
+            }
+          })
+          .obterLinksSistema();
+      }
+    }
+
+    function sincronizarCorBotaoPicker(hex) {
+      document.getElementById('cfg-cor-botao').value = hex;
+    }
+
+    function definirCorBotaoPreset(hex) {
+      document.getElementById('cfg-cor-botao').value = hex;
+      document.getElementById('cfg-picker-botao').value = hex;
+    }
+
+    function sincronizarCorFundoPicker(hex) {
+      document.getElementById('cfg-cor-fundo').value = hex;
+    }
+
+    function aplicarTamanhoFonte(fator) {
+      configSistema.escalaFonte = fator;
+      var elValor = document.getElementById('valor-escala-fonte');
+      if (elValor) elValor.innerHTML = fator + '%';
+
+      var tag = document.getElementById('estilo-fonte-dinamico');
+      if (!tag) {
+        tag = document.createElement('style');
+        tag.id = 'estilo-fonte-dinamico';
+        document.head.appendChild(tag);
+      }
+      var mult = fator / 100;
+      tag.innerHTML = 
+        '.titulo-principal { font-size: ' + Math.round(40 * mult) + 'px !important; }' +
+        '.subtitulo { font-size: ' + Math.round(24 * mult) + 'px !important; }' +
+        '.pergunta-texto { font-size: ' + Math.round(34 * mult) + 'px !important; }' +
+        '.opcao-btn .emoji { font-size: ' + Math.round(64 * mult) + 'px !important; }' +
+        '.opcao-btn .rotulo { font-size: ' + Math.round(20 * mult) + 'px !important; }' +
+        '.btn-acao { font-size: ' + Math.round(26 * mult) + 'px !important; }';
+    }
+
+    function alterarEscalaFonte(delta) {
+      var novo = (configSistema.escalaFonte || 100) + delta;
+      if (novo < 60) novo = 60;
+      if (novo > 170) novo = 170;
+      aplicarTamanhoFonte(novo);
+    }
+
+    function montarFormularioEdicaoPerguntas() {
+      var container = document.getElementById('lista-perguntas-edicao');
+      if (!container) return;
+      var html = '';
+
+      for (var i = 0; i < configSistema.perguntas.length; i++) {
+        var p = configSistema.perguntas[i];
+        normalizarOpcoesPergunta(p);
+        var audioAtual = p.audio || '';
+        var qtdOpcoes = p.opcoes.length;
+
+        html += '<div class="card-pergunta-item">';
+        html += '<div style="overflow:hidden; margin-bottom:14px; padding-bottom:10px; border-bottom:1px dashed #cbd5e1;">';
+        html += '<span class="badge-pergunta-numero">Pergunta ' + (i + 1) + ' de ' + configSistema.perguntas.length + '</span>';
+        if (configSistema.perguntas.length > 1) {
+          html += '<button type="button" class="btn-remover-pergunta-admin" onclick="removerPergunta(' + i + ')">Excluir</button>';
+        }
+        html += '</div>';
+
+        html += '<div class="linha-campo-form">';
+        html += '<label class="rotulo-campo-admin">Enunciado da Pergunta:</label>';
+        html += '<input id="cfg-txt-' + i + '" class="input-admin-moderno" type="text" value="' + p.texto.replace(/"/g, '&quot;') + '" />';
+        html += '</div>';
+
+        html += '<div class="faixa-audio-config">';
+        html += '<label class="rotulo-campo-admin">Áudio no Drive ou Arquivo:</label>';
+        html += '<input id="cfg-aud-' + i + '" class="input-admin-moderno" style="margin-bottom:8px;" type="text" placeholder="https://..." value="' + audioAtual + '" />';
+        html += '<div>';
+        html += '<input id="cfg-aud-file-' + i + '" type="file" accept="audio/*" style="display:none;" onchange="enviarAudioParaGoogleDrive(this, ' + i + ')" />';
+        html += '<button type="button" class="btn-secundario-admin btn-azul-admin" onclick="document.getElementById(\'cfg-aud-file-' + i + '\').click()">&#128194; Fazer Upload para o Drive</button>';
+        html += '<button type="button" class="btn-secundario-admin" onclick="testarAudioConfig(' + i + ')">&#9654; Testar Áudio</button>';
+        html += '</div>';
+        html += '</div>';
+
+        html += '<div class="linha-campo-form" style="margin-bottom:0;">';
+        html += '<div style="overflow:hidden; margin-bottom:8px;">';
+        html += '<label class="rotulo-campo-admin" style="float:left; line-height:32px;">Alternativas de Resposta (' + qtdOpcoes + ' opções):</label>';
+        html += '<div style="float:right;">';
+        html += '<button type="button" class="btn-secundario-admin" onclick="aplicarPresetOpcoes(' + i + ', 2)">Modelo Sim/Não (2)</button>';
+        html += '<button type="button" class="btn-secundario-admin" onclick="aplicarPresetOpcoes(' + i + ', 3)">Modelo 3 Opções</button>';
+        html += '<button type="button" class="btn-secundario-admin" onclick="aplicarPresetOpcoes(' + i + ', 5)">Modelo 5 Notas</button>';
+        html += '</div>';
+        html += '</div>';
+
+        html += '<div class="grid-opcoes-edicao">';
+        var larguraCardOpcao = Math.floor(96 / qtdOpcoes);
+        for (var j = 0; j < qtdOpcoes; j++) {
+          var op = p.opcoes[j];
+          html += '<div class="card-opcao-edicao-col" style="width:' + larguraCardOpcao + '%;">';
+          html += '<input id="cfg-op-em-' + i + '-' + j + '" class="input-emoji-edicao" type="text" maxlength="4" value="' + op.emoji + '" title="Emoji da opção" />';
+          html += '<input id="cfg-op-rot-' + i + '-' + j + '" class="input-rotulo-edicao" type="text" value="' + op.rotulo + '" title="Texto do rótulo" />';
+          html += '</div>';
+        }
+        html += '</div>';
+        html += '</div>';
+
+        html += '</div>';
+      }
+
+      container.innerHTML = html;
+    }
+
+    function aplicarPresetOpcoes(indicePergunta, quantidade) {
+      sincronizarEstadoEdicaoPerguntas();
+      if (quantidade === 2) {
+        configSistema.perguntas[indicePergunta].opcoes = [
+          { valor: 1, rotulo: "Não", emoji: "👎" },
+          { valor: 2, rotulo: "Sim", emoji: "👍" }
+        ];
+      } else if (quantidade === 3) {
+        configSistema.perguntas[indicePergunta].opcoes = [
+          { valor: 1, rotulo: "Ruim", emoji: "🙁" },
+          { valor: 2, rotulo: "Regular", emoji: "😐" },
+          { valor: 3, rotulo: "Bom", emoji: "🙂" }
+        ];
+      } else {
+        configSistema.perguntas[indicePergunta].opcoes = [
+          { valor: 1, rotulo: "Péssimo", emoji: "😡" },
+          { valor: 2, rotulo: "Ruim", emoji: "🙁" },
+          { valor: 3, rotulo: "Regular", emoji: "😐" },
+          { valor: 4, rotulo: "Bom", emoji: "🙂" },
+          { valor: 5, rotulo: "Excelente", emoji: "😃" }
+        ];
+      }
+      montarFormularioEdicaoPerguntas();
+    }
+
+    function sincronizarEstadoEdicaoPerguntas() {
+      for (var i = 0; i < configSistema.perguntas.length; i++) {
+        var p = configSistema.perguntas[i];
+        var txtInput = document.getElementById('cfg-txt-' + i);
+        if (txtInput) p.texto = txtInput.value;
+
+        var audInput = document.getElementById('cfg-aud-' + i);
+        if (audInput) p.audio = audInput.value;
+
+        if (p.opcoes) {
+          for (var j = 0; j < p.opcoes.length; j++) {
+            var emInput = document.getElementById('cfg-op-em-' + i + '-' + j);
+            if (emInput) p.opcoes[j].emoji = emInput.value || '⭐';
+
+            var rotInput = document.getElementById('cfg-op-rot-' + i + '-' + j);
+            if (rotInput) p.opcoes[j].rotulo = rotInput.value || ('Opção ' + (j + 1));
+          }
+        }
+      }
+    }
+
+    function adicionarNovaPergunta() {
+      sincronizarEstadoEdicaoPerguntas();
+      var novoId = configSistema.perguntas.length + 1;
+      configSistema.perguntas.push({
+        id: novoId,
+        texto: "Como você avalia este ponto do atendimento?",
+        audio: "",
+        opcoes: [
+          { valor: 1, rotulo: "Péssimo", emoji: "😡" },
+          { valor: 2, rotulo: "Ruim", emoji: "🙁" },
+          { valor: 3, rotulo: "Regular", emoji: "😐" },
+          { valor: 4, rotulo: "Bom", emoji: "🙂" },
+          { valor: 5, rotulo: "Excelente", emoji: "😃" }
+        ]
+      });
+      montarFormularioEdicaoPerguntas();
+    }
+
+    function removerPergunta(indice) {
+      if (configSistema.perguntas.length <= 1) {
+        mostrarMensagem('O questionário deve ter ao menos 1 pergunta.');
+        return;
+      }
+      sincronizarEstadoEdicaoPerguntas();
+      configSistema.perguntas.splice(indice, 1);
+      montarFormularioEdicaoPerguntas();
+    }
+
+    function testarAudioConfig(indice) {
+      sincronizarEstadoEdicaoPerguntas();
+      var p = configSistema.perguntas[indice];
+      var fonte = p.audio;
+      if (!fonte) {
+        mostrarMensagem('Nenhum áudio informado para esta pergunta.');
+        return;
+      }
+      try {
+        var aud = new Audio(fonte);
+        aud.play();
+        mostrarMensagem('Reproduzindo áudio...');
+      } catch (e) {
+        mostrarMensagem('Não foi possível tocar o áudio.');
+      }
+    }
+
+    function enviarAudioParaGoogleDrive(input, indice) {
+      if (!input.files || !input.files[0]) return;
+      var file = input.files[0];
+      mostrarMensagem('Enviando "' + file.name + '" para o Google Drive...');
+
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        if (typeof google !== 'undefined' && google.script && google.script.run) {
+          google.script.run
+            .withSuccessHandler(function(res) {
+              if (res && res.sucesso) {
+                configSistema.perguntas[indice].audio = res.url;
+                var campo = document.getElementById('cfg-aud-' + indice);
+                if (campo) campo.value = res.url;
+                preCarregarAudiosEmCache();
+                mostrarMensagem('Áudio salvo no Google Drive com sucesso!');
+              }
+            })
+            .withFailureHandler(function() {
+              mostrarMensagem('Erro ao enviar áudio para o Drive.');
+            })
+            .uploadMidiaDrive(file.name, e.target.result, file.type || 'audio/mp3');
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function enviarLogoParaGoogleDrive(input) {
+      if (!input.files || !input.files[0]) return;
+      var file = input.files[0];
+      mostrarMensagem('Enviando logo para o Google Drive...');
+
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        if (typeof google !== 'undefined' && google.script && google.script.run) {
+          google.script.run
+            .withSuccessHandler(function(res) {
+              if (res && res.sucesso) {
+                var campo = document.getElementById('cfg-logo-url');
+                if (campo) campo.value = res.url;
+                configSistema.logoUrl = res.url;
+                mostrarMensagem('Logo salvo no Drive com sucesso!');
+              }
+            })
+            .withFailureHandler(function() {
+              mostrarMensagem('Erro ao enviar logo para o Drive.');
+            })
+            .uploadMidiaDrive(file.name, e.target.result, file.type || 'image/png');
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removerLogoConfig() {
+      document.getElementById('cfg-logo-url').value = '';
+      configSistema.logoUrl = '';
+      mostrarMensagem('Logotipo removido.');
+    }
+
+    function salvarConfiguracoesAdmin() {
+      sincronizarEstadoEdicaoPerguntas();
+
+      configSistema.corBotao = document.getElementById('cfg-cor-botao').value || '#0284c7';
+      configSistema.corFundo = document.getElementById('cfg-cor-fundo').value || '#f4f6f9';
+      configSistema.logoUrl = document.getElementById('cfg-logo-url').value || '';
+      configSistema.tituloInicial = document.getElementById('cfg-titulo-inicial').value || 'Pesquisa de Satisfação';
+      configSistema.subtituloInicial = document.getElementById('cfg-subtitulo-inicial').value || '';
+      
+      var campoSenha = document.getElementById('cfg-senha-admin');
+      if (campoSenha && campoSenha.value.trim() !== '') {
+        configSistema.senhaAdmin = campoSenha.value.trim();
+      }
+
+      perguntas = configSistema.perguntas;
+
+      try {
+        window.localStorage.setItem('config_totem_appscript', JSON.stringify(configSistema));
+      } catch (e) {}
+
+      preCarregarAudiosEmCache();
+
+      if (typeof google !== 'undefined' && google.script && google.script.run) {
+        google.script.run
+          .withSuccessHandler(function(res) {
+            mostrarMensagem(res.mensagem || 'Configurações salvas e sincronizadas!');
+          })
+          .withFailureHandler(function() {
+            mostrarMensagem('Salvo localmente (erro ao sincronizar na nuvem).');
+          })
+          .salvarConfiguracoesBackend(configSistema);
+      }
+
+      aplicarConfiguracoesVisuais();
+      fecharModalConfig();
+
+      var secaoPergunta = document.getElementById('secao-pergunta');
+      if (secaoPergunta && secaoPergunta.className.indexOf('ativa') !== -1) {
+        if (indiceAtual >= perguntas.length) indiceAtual = 0;
+        carregarPergunta(indiceAtual);
+      }
+    }
+
+    function sincronizarFilaPendente() {
+      try {
+        var armazenado = window.localStorage.getItem('avaliacoes_fila_pendente');
+        if (!armazenado || armazenado === '[]') {
+          mostrarMensagem('Nenhuma avaliação pendente na fila offline.');
+          return;
+        }
+        var fila = JSON.parse(armazenado);
+        mostrarMensagem('Enviando ' + fila.length + ' avaliação(ões) para o Sheets...');
+
+        if (typeof google !== 'undefined' && google.script && google.script.run) {
+          for (var i = 0; i < fila.length; i++) {
+            (function(item) {
+              google.script.run
+                .withSuccessHandler(function() {
+                  removerItemFilaLocal(item.data_hora);
+                })
+                .registrarAvaliacao(item);
+            })(fila[i]);
+          }
+          setTimeout(function() {
+            mostrarMensagem('Sincronização concluída!');
+            atualizarLinksGoogleNuvem();
+          }, 2000);
+        }
+      } catch (e) {
+        mostrarMensagem('Erro ao ler fila pendente.');
+      }
+    }
+
+    function limparFilaLocal() {
+      try {
+        window.localStorage.removeItem('avaliacoes_fila_pendente');
+        mostrarMensagem('Fila local limpa com sucesso.');
+      } catch (e) {}
+    }
+
+    window.onload = function() {
+      carregarDadosDoBackend();
+    };
+  </script>
+</body>
+</html>
+```
