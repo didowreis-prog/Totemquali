@@ -727,13 +727,13 @@
       <div class="caixa-modal-ativacao">
         <h2 style="font-size:26px; color:#0f172a; margin-bottom:8px;">Ativação do Totem</h2>
         <p style="color: #64748b; font-size: 15px; line-height: 1.45;">
-          Digite o <strong>código de 6 dígitos</strong> cadastrado na aba <em>"Unidades"</em> da Planilha Google:
+          Digite o <strong>código de 6 dígitos</strong> de identificação da unidade cadastrada no sistema central:
         </p>
         <input id="input-codigo-unidade" class="input-codigo-6digitos" type="text" maxlength="6" placeholder="000000" inputmode="numeric" pattern="[0-9]*" />
         
         <div style="margin-bottom: 16px; text-align: left;">
-          <label style="font-size: 12px; font-weight: bold; color: #475569; display:block; margin-bottom:4px;">URL da API Google Apps Script:</label>
-          <input id="input-api-url-ativacao" class="input-admin-moderno" type="text" style="font-size: 13px; padding: 8px 12px;" placeholder="https://script.google.com/macros/s/.../exec" />
+          <label style="font-size: 12px; font-weight: bold; color: #475569; display:block; margin-bottom:4px;">URL da API do Servidor Central:</label>
+          <input id="input-api-url-ativacao" class="input-admin-moderno" type="text" style="font-size: 13px; padding: 8px 12px;" placeholder="https://..." />
         </div>
 
         <div>
@@ -778,17 +778,17 @@
           <button id="menu-item-identidade" class="item-menu-drawer drawer-ativo" type="button" onclick="selecionarSecaoMenu('identidade', 'Identidade & Cores')">
             &#127912; Identidade &amp; Cores
           </button>
-          <button id="menu-item-perguntas" class="item-menu-drawer" type="button" onclick="selecionarSecaoMenu('perguntas', 'Perguntas & Áudios (Drive)')">
+          <button id="menu-item-perguntas" class="item-menu-drawer" type="button" onclick="selecionarSecaoMenu('perguntas', 'Perguntas & Áudios')">
             &#10067; Perguntas &amp; Áudios
           </button>
           <button id="menu-item-acessibilidade" class="item-menu-drawer" type="button" onclick="selecionarSecaoMenu('acessibilidade', 'Acessibilidade')">
             &#128269; Acessibilidade
           </button>
-          <button id="menu-item-seguranca" class="item-menu-drawer" type="button" onclick="selecionarSecaoMenu('seguranca', 'Senha & Segurança (Planilha)')">
+          <button id="menu-item-seguranca" class="item-menu-drawer" type="button" onclick="selecionarSecaoMenu('seguranca', 'Senha & Segurança')">
             &#128274; Senha &amp; Segurança
           </button>
-          <button id="menu-item-nuvem" class="item-menu-drawer" type="button" onclick="selecionarSecaoMenu('nuvem', 'Google Sheets & Nuvem')">
-            &#9729; Google Sheets &amp; Nuvem
+          <button id="menu-item-nuvem" class="item-menu-drawer" type="button" onclick="selecionarSecaoMenu('nuvem', 'Servidor & Nuvem')">
+            &#9729; Servidor &amp; Nuvem
           </button>
         </div>
 
@@ -799,7 +799,7 @@
           <div id="secao-cfg-unidade" class="painel-secao-conteudo">
             <div class="card-config-moderno">
               <h4>Terminal Vinculado</h4>
-              <p class="descricao-card">Este tablet está associado a uma unidade registrada no Google Sheets.</p>
+              <p class="descricao-card">Este tablet está associado a uma unidade registrada no sistema central.</p>
               
               <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 18px; margin-bottom: 20px;">
                 <div style="font-size: 14px; color: #166534;">CÓDIGO DA UNIDADE (6 DÍGITOS):</div>
@@ -808,8 +808,8 @@
               </div>
 
               <div class="linha-campo-form">
-                <label class="rotulo-campo-admin">URL da API Google Apps Script:</label>
-                <input id="cfg-api-url" type="text" class="input-admin-moderno" placeholder="https://script.google.com/macros/s/.../exec" />
+                <label class="rotulo-campo-admin">URL da API do Servidor Central:</label>
+                <input id="cfg-api-url" type="text" class="input-admin-moderno" placeholder="https://..." />
               </div>
 
               <div>
@@ -817,7 +817,7 @@
                   Desvincular Este Tablet (Trocar Código)
                 </button>
                 <a id="link-planilha-unidades" class="btn-secundario-admin btn-azul-admin" href="#" target="_blank">
-                  &#128196; Ver Lista de Unidades na Planilha
+                  &#128196; Acessar Cadastro de Unidades
                 </a>
               </div>
             </div>
@@ -855,15 +855,15 @@
 
             <div class="card-config-moderno">
               <h4>Logotipo e Mensagem Inicial</h4>
-              <p class="descricao-card">Faça o upload do logo para a pasta do Google Drive ou use um link direto.</p>
+              <p class="descricao-card">Envie a imagem para o servidor em nuvem ou utilize um link direto.</p>
 
               <div class="linha-campo-form">
                 <label class="rotulo-campo-admin">URL da Imagem / Logo:</label>
                 <input id="cfg-logo-url" type="text" class="input-admin-moderno" placeholder="https://..." />
                 <div style="margin-top: 8px;">
-                  <button type="button" class="btn-secundario-admin btn-azul-admin" onclick="document.getElementById('cfg-logo-arquivo').click()">&#128194; Enviar Imagem para o Drive</button>
+                  <button type="button" class="btn-secundario-admin btn-azul-admin" onclick="document.getElementById('cfg-logo-arquivo').click()">&#128194; Enviar Imagem para a Nuvem</button>
                   <button type="button" class="btn-secundario-admin" onclick="removerLogoConfig()">Remover Imagem</button>
-                  <input id="cfg-logo-arquivo" type="file" accept="image/*" style="display:none;" onchange="enviarLogoParaGoogleDrive(this)" />
+                  <input id="cfg-logo-arquivo" type="file" accept="image/*" style="display:none;" onchange="enviarLogoParaNuvem(this)" />
                 </div>
               </div>
 
@@ -879,11 +879,11 @@
             </div>
           </div>
 
-          <!-- SEÇÃO 2: PERGUNTAS & ÁUDIOS (DRIVE) -->
+          <!-- SEÇÃO 2: PERGUNTAS & ÁUDIOS -->
           <div id="secao-cfg-perguntas" class="painel-secao-conteudo">
             <div class="card-config-moderno">
               <h4>Questionário da Unidade</h4>
-              <p class="descricao-card">As alterações feitas aqui são salvas na nuvem para esta unidade.</p>
+              <p class="descricao-card">As alterações feitas aqui são sincronizadas na nuvem para esta unidade.</p>
               
               <div id="lista-perguntas-edicao"></div>
 
@@ -909,11 +909,11 @@
             </div>
           </div>
 
-          <!-- SEÇÃO 4: SENHA & SEGURANÇA (PLANILHA) -->
+          <!-- SEÇÃO 4: SENHA & SEGURANÇA -->
           <div id="secao-cfg-seguranca" class="painel-secao-conteudo">
             <div class="card-config-moderno">
               <h4>Senha Administrativa da Unidade</h4>
-              <p class="descricao-card">Senha vinculada à linha desta unidade na aba <strong>Unidades</strong> da Planilha Google.</p>
+              <p class="descricao-card">Senha de controle administrativo vinculada a esta unidade no sistema central.</p>
               
               <div class="linha-campo-form">
                 <label class="rotulo-campo-admin">Senha de Acesso do Totem:</label>
@@ -922,33 +922,33 @@
             </div>
 
             <div class="card-config-moderno" style="background-color: #f0fdf4; border: 1px solid #bbf7d0;">
-              <h4 style="color: #166534;">Alteração Centralizada na Planilha</h4>
+              <h4 style="color: #166534;">Alteração Centralizada no Sistema</h4>
               <p class="descricao-card" style="color: #15803d; margin-bottom: 12px;">
-                Você também pode alterar a senha abrindo a aba <strong>Unidades</strong> da planilha e editando a coluna <strong>"Senha Admin do Totem"</strong> correspondente a este código.
+                Você também pode alterar a senha acessando diretamente o cadastro de unidades no sistema central e editando a coluna <strong>"Senha Admin do Totem"</strong> correspondente a este código.
               </p>
               <a id="link-planilha-google-senha" class="btn-secundario-admin btn-azul-admin" style="font-size: 14px; padding: 12px 20px; display:inline-block;" href="#" target="_blank">
-                &#128196; Abrir Aba Unidades na Planilha
+                &#128196; Acessar Cadastro de Unidades
               </a>
             </div>
           </div>
 
-          <!-- SEÇÃO 5: GOOGLE SHEETS & NUVEM -->
+          <!-- SEÇÃO 5: SERVIDOR & NUVEM -->
           <div id="secao-cfg-nuvem" class="painel-secao-conteudo">
             <div class="card-config-moderno">
-              <h4>Conexão em Tempo Real com o Google</h4>
+              <h4>Conexão em Tempo Real com o Servidor</h4>
               <p class="descricao-card">Todas as avaliações desta unidade são enviadas com o identificador do local.</p>
               
               <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 18px; margin-bottom: 20px;">
-                <div id="status-conexao-nuvem" style="font-size: 18px; font-weight: bold; color: #166534;">Conectado ao Google Workspace</div>
+                <div id="status-conexao-nuvem" style="font-size: 18px; font-weight: bold; color: #166534;">Conectado ao Servidor Central</div>
                 <div id="contador-registros-nuvem" style="font-size: 14px; color: #15803d; margin-top: 4px;">Carregando total de respostas...</div>
               </div>
 
               <div style="margin-top: 15px;">
                 <a id="link-planilha-google" class="btn-secundario-admin btn-azul-admin" style="font-size: 15px; padding: 14px 20px; display:inline-block;" href="#" target="_blank">
-                  &#128196; Abrir Planilha Google Sheets
+                  &#128196; Abrir Base de Avaliações
                 </a>
                 <a id="link-pasta-drive" class="btn-secundario-admin" style="font-size: 15px; padding: 14px 20px; display:inline-block;" href="#" target="_blank">
-                  &#128194; Abrir Pasta de Mídias no Drive
+                  &#128194; Abrir Repositório de Mídias
                 </a>
               </div>
             </div>
@@ -981,8 +981,8 @@
 
   <script>
     /* ==========================================================================
-     *  CONFIGURAÇÃO DA API GOOGLE APPS SCRIPT (GITHUB PAGES)
-     *  URL oficial da sua implantação no Google Apps Script:
+     *  CONFIGURAÇÃO DA API DO SERVIDOR (GITHUB PAGES)
+     *  URL oficial da sua implantação da API no servidor central:
      * ========================================================================== */
     var URL_API_PADRAO = "https://script.google.com/macros/s/AKfycbyKhI02D3sFNrSAUSjAk3QzmYfg1HyXt4mEi6RwnuFoIVnT5kbxgOxqUn4ct3A5dGiCiQ/exec"; 
 
@@ -1002,7 +1002,7 @@
     function chamarApiGAS(acao, dados, callbackSucesso, callbackErro) {
       var url = obterUrlApi();
       if (!url) {
-        if (callbackErro) callbackErro({ mensagem: "URL da API Google Apps Script não configurada." });
+        if (callbackErro) callbackErro({ mensagem: "URL da API do servidor não configurada." });
         return;
       }
 
@@ -1014,7 +1014,6 @@
       try {
         var xhr = new XMLHttpRequest();
         xhr.open("POST", url, true);
-        // text/plain previne que o navegador envie requisição preflight OPTIONS no Android 4 / CORS
         xhr.setRequestHeader("Content-Type", "text/plain;charset=utf-8");
 
         xhr.onreadystatechange = function() {
@@ -1033,7 +1032,7 @@
         };
 
         xhr.onerror = function() {
-          if (callbackErro) callbackErro({ mensagem: "Erro de conexão de rede ou CORS com a API." });
+          if (callbackErro) callbackErro({ mensagem: "Erro de conexão de rede ou rota com a API." });
         };
 
         xhr.send(JSON.stringify(payload));
@@ -1193,7 +1192,7 @@
       var urlDigitada = inputUrl ? inputUrl.value.trim() : '';
 
       if (!urlDigitada) {
-        if (msg) msg.innerHTML = 'Por favor, informe a URL da sua implantação do Apps Script.';
+        if (msg) msg.innerHTML = 'Por favor, informe a URL da API do servidor.';
         return;
       }
       salvarUrlApi(urlDigitada);
@@ -1203,7 +1202,7 @@
         return;
       }
 
-      if (msg) msg.innerHTML = 'Consultando Planilha Google...';
+      if (msg) msg.innerHTML = 'Consultando servidor central...';
 
       chamarApiGAS(
         "validarCodigo",
@@ -1228,7 +1227,7 @@
           }
         },
         function(erro) {
-          if (msg) msg.innerHTML = (erro && erro.mensagem) ? erro.mensagem : 'Erro ao conectar à API do Google.';
+          if (msg) msg.innerHTML = (erro && erro.mensagem) ? erro.mensagem : 'Erro ao conectar ao servidor central.';
         }
       );
     }
@@ -1538,7 +1537,7 @@
         return;
       }
 
-      mostrarMensagem('Validando senha com a Planilha Google...');
+      mostrarMensagem('Validando senha com o servidor central...');
       chamarApiGAS(
         "validarSenha",
         { senha: digitada, codigo: configSistema.codigoUnidade },
@@ -1626,7 +1625,7 @@
             if (elLinkPS && info.urlPlanilha) elLinkPS.href = info.urlPlanilha;
             if (elLinkU && info.urlPlanilha) elLinkU.href = info.urlPlanilha;
             if (elLinkD && info.urlPastaDrive) elLinkD.href = info.urlPastaDrive;
-            if (elCont) elCont.innerHTML = 'Total registrado no Sheets: ' + info.totalRespostas + ' avaliação(ões)';
+            if (elCont) elCont.innerHTML = 'Total registrado no sistema: ' + info.totalRespostas + ' avaliação(ões)';
 
             if (info.senhaAtual) {
               configSistema.senhaAdmin = info.senhaAtual;
@@ -1704,11 +1703,11 @@
         html += '</div>';
 
         html += '<div class="faixa-audio-config">';
-        html += '<label class="rotulo-campo-admin">Áudio no Drive ou Link Web:</label>';
+        html += '<label class="rotulo-campo-admin">Áudio em Nuvem ou Link Web:</label>';
         html += '<input id="cfg-aud-' + i + '" class="input-admin-moderno" style="margin-bottom:8px;" type="text" placeholder="https://..." value="' + audioAtual + '" />';
         html += '<div>';
-        html += '<input id="cfg-aud-file-' + i + '" type="file" accept="audio/*" style="display:none;" onchange="enviarAudioParaGoogleDrive(this, ' + i + ')" />';
-        html += '<button type="button" class="btn-secundario-admin btn-azul-admin" onclick="document.getElementById(\'cfg-aud-file-' + i + '\').click()">&#128194; Fazer Upload para o Drive</button>';
+        html += '<input id="cfg-aud-file-' + i + '" type="file" accept="audio/*" style="display:none;" onchange="enviarAudioParaNuvem(this, ' + i + ')" />';
+        html += '<button type="button" class="btn-secundario-admin btn-azul-admin" onclick="document.getElementById(\'cfg-aud-file-' + i + '\').click()">&#128194; Enviar para a Nuvem</button>';
         html += '<button type="button" class="btn-secundario-admin" onclick="testarAudioConfig(' + i + ')">&#9654; Testar Áudio</button>';
         html += '</div>';
         html += '</div>';
@@ -1832,10 +1831,10 @@
       }
     }
 
-    function enviarAudioParaGoogleDrive(input, indice) {
+    function enviarAudioParaNuvem(input, indice) {
       if (!input.files || !input.files[0]) return;
       var file = input.files[0];
-      mostrarMensagem('Enviando "' + file.name + '" para o Google Drive...');
+      mostrarMensagem('Enviando "' + file.name + '" para a nuvem...');
 
       var reader = new FileReader();
       reader.onload = function(e) {
@@ -1852,21 +1851,21 @@
               var campo = document.getElementById('cfg-aud-' + indice);
               if (campo) campo.value = res.url;
               preCarregarAudiosEmCache();
-              mostrarMensagem('Áudio salvo no Google Drive com sucesso!');
+              mostrarMensagem('Áudio salvo na nuvem com sucesso!');
             }
           },
           function() {
-            mostrarMensagem('Erro ao enviar áudio para o Drive.');
+            mostrarMensagem('Erro ao enviar áudio para a nuvem.');
           }
         );
       };
       reader.readAsDataURL(file);
     }
 
-    function enviarLogoParaGoogleDrive(input) {
+    function enviarLogoParaNuvem(input) {
       if (!input.files || !input.files[0]) return;
       var file = input.files[0];
-      mostrarMensagem('Enviando logo para o Google Drive...');
+      mostrarMensagem('Enviando logo para a nuvem...');
 
       var reader = new FileReader();
       reader.onload = function(e) {
@@ -1882,11 +1881,11 @@
               var campo = document.getElementById('cfg-logo-url');
               if (campo) campo.value = res.url;
               configSistema.logoUrl = res.url;
-              mostrarMensagem('Logo salvo no Drive com sucesso!');
+              mostrarMensagem('Logo salvo na nuvem com sucesso!');
             }
           },
           function() {
-            mostrarMensagem('Erro ao enviar logo para o Drive.');
+            mostrarMensagem('Erro ao enviar logo para a nuvem.');
           }
         );
       };
@@ -1928,7 +1927,7 @@
 
       preCarregarAudiosEmCache();
 
-      mostrarMensagem('Salvando alterações no Google Drive/Sheets...');
+      mostrarMensagem('Salvando alterações no servidor...');
       chamarApiGAS(
         "salvarConfiguracoes",
         { config: configSistema },
@@ -1958,7 +1957,7 @@
           return;
         }
         var fila = JSON.parse(armazenado);
-        mostrarMensagem('Enviando ' + fila.length + ' avaliação(ões) para o Sheets...');
+        mostrarMensagem('Enviando ' + fila.length + ' avaliação(ões) para o servidor...');
 
         for (var i = 0; i < fila.length; i++) {
           (function(item) {
