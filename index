@@ -53,10 +53,22 @@
       display: block;
     }
 
+    .badge-identificacao-unidade {
+      display: inline-block;
+      font-size: 13px;
+      font-weight: bold;
+      color: #0284c7;
+      background-color: #e0f2fe;
+      border: 1px solid #bae6fd;
+      border-radius: 12px;
+      padding: 5px 14px;
+      margin-bottom: 8px;
+    }
+
     h1.titulo-principal {
       font-size: 40px;
       color: #0f172a;
-      margin-top: 15px;
+      margin-top: 10px;
       margin-bottom: 16px;
       line-height: 1.25;
     }
@@ -94,7 +106,6 @@
       height: 42px;
     }
 
-    /* Grade de respostas centralizada com folga lateral */
     .opcoes-respostas {
       width: 100%;
       max-width: 960px;
@@ -116,7 +127,6 @@
       transition: border-color 0.15s, background-color 0.15s;
     }
 
-    /* Larguras dinâmicas por quantidade de opções */
     .opcoes-qtd-2 .opcao-btn {
       width: 40%;
       min-width: 180px;
@@ -248,9 +258,34 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(15, 23, 42, 0.75);
+      background-color: rgba(15, 23, 42, 0.85);
       z-index: 10000;
       text-align: center;
+    }
+
+    .caixa-modal-ativacao {
+      background-color: #ffffff;
+      width: 90%;
+      max-width: 560px;
+      margin: 8% auto 0 auto;
+      padding: 32px 26px;
+      border-radius: 24px;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.45);
+      text-align: center;
+    }
+
+    .input-codigo-6digitos {
+      width: 85%;
+      padding: 14px;
+      font-size: 34px;
+      text-align: center;
+      border: 3px solid #0284c7;
+      border-radius: 16px;
+      margin: 18px auto;
+      letter-spacing: 8px;
+      color: #0f172a;
+      font-weight: bold;
+      background-color: #f0f9ff;
     }
 
     .caixa-modal-senha {
@@ -289,7 +324,6 @@
       overflow: hidden;
     }
 
-    /* Cabeçalho com Hamburger Menu */
     .config-cabecalho-moderno {
       padding: 16px 24px;
       background-color: #0f172a;
@@ -329,13 +363,12 @@
       margin-top: 3px;
     }
 
-    /* Drawer / Menu lateral Hamburger */
     .drawer-menu-admin {
       display: none;
       position: absolute;
       top: 76px;
       left: 0;
-      width: 280px;
+      width: 290px;
       bottom: 75px;
       background-color: #0f172a;
       border-right: 2px solid #1e293b;
@@ -560,7 +593,6 @@
       color: #0f172a;
     }
 
-    /* Rodapé com Assinatura da Iniciativa DOCA */
     .config-rodape-moderno {
       padding: 14px 24px;
       background-color: #ffffff;
@@ -629,7 +661,10 @@
 
     <!-- SEÇÃO 1: TELA INICIAL DO RESPONDENTE -->
     <div id="secao-1" class="secao ativa">
-      <div id="bloco-logo-inicial" style="display: none; margin-top: 10px; margin-bottom: 15px;">
+      <div id="bloco-badge-unidade" style="margin-top: 5px;">
+        <span id="label-unidade-topo" class="badge-identificacao-unidade">Unidade Conectada</span>
+      </div>
+      <div id="bloco-logo-inicial" style="display: none; margin-top: 5px; margin-bottom: 12px;">
         <img id="img-logo-inicial" class="logo-tela-inicial" src="" alt="Logo" />
       </div>
       <h1 id="titulo-tela-inicial" class="titulo-principal">Pesquisa de Satisfação</h1>
@@ -647,10 +682,7 @@
 
     <!-- SEÇÃO DE PERGUNTAS -->
     <div id="secao-pergunta" class="secao">
-      
-      <div id="texto-pergunta" class="pergunta-texto">
-        Carregando...
-      </div>
+      <div id="texto-pergunta" class="pergunta-texto">Carregando...</div>
 
       <div class="area-audio">
         <audio id="player-visivel" controls preload="auto">
@@ -665,7 +697,6 @@
           AVANÇAR &rarr;
         </button>
       </div>
-
     </div>
 
     <!-- SEÇÃO FINAL: CONCLUSÃO -->
@@ -691,11 +722,34 @@
       </svg>
     </button>
 
-    <!-- Modal de Senha com Verificação Local e em Nuvem -->
+    <!-- Modal de Vinculação / Ativação (6 Dígitos) -->
+    <div id="modal-ativacao-unidade" class="overlay-modal">
+      <div class="caixa-modal-ativacao">
+        <h2 style="font-size:26px; color:#0f172a; margin-bottom:8px;">Ativação do Totem</h2>
+        <p style="color: #64748b; font-size: 15px; line-height: 1.45;">
+          Digite o <strong>código de 6 dígitos</strong> cadastrado na aba <em>"Unidades"</em> da Planilha Google:
+        </p>
+        <input id="input-codigo-unidade" class="input-codigo-6digitos" type="text" maxlength="6" placeholder="000000" inputmode="numeric" pattern="[0-9]*" />
+        
+        <div style="margin-bottom: 16px; text-align: left;">
+          <label style="font-size: 12px; font-weight: bold; color: #475569; display:block; margin-bottom:4px;">URL da API Google Apps Script:</label>
+          <input id="input-api-url-ativacao" class="input-admin-moderno" type="text" style="font-size: 13px; padding: 8px 12px;" placeholder="https://script.google.com/macros/s/.../exec" />
+        </div>
+
+        <div>
+          <button class="btn-acao btn-primario-kiosk" style="padding: 16px 36px; font-size: 20px;" type="button" onclick="confirmarAtivacaoUnidade()">
+            Vincular Terminal
+          </button>
+        </div>
+        <p id="msg-erro-ativacao" style="color: #dc2626; font-size: 14px; margin-top: 14px; font-weight: bold;"></p>
+      </div>
+    </div>
+
+    <!-- Modal de Senha Administrativa -->
     <div id="modal-senha-admin" class="overlay-modal">
       <div class="caixa-modal-senha">
         <h2 style="font-size:24px; color:#0f172a; margin-bottom:8px;">Acesso Administrativo</h2>
-        <p style="color: #64748b; font-size: 15px;">Digite a senha definida na Planilha Google:</p>
+        <p id="subtitulo-senha-modal" style="color: #64748b; font-size: 15px;">Digite a senha da unidade:</p>
         <input id="input-senha-tentativa" class="input-senha-admin" type="password" maxlength="16" placeholder="****" />
         <div style="margin-top: 15px;">
           <button class="btn-fechar-dialogo" type="button" onclick="fecharModalSenha()">Cancelar</button>
@@ -708,7 +762,6 @@
     <div id="modal-configuracoes" class="overlay-modal">
       <div class="caixa-modal-config">
         
-        <!-- Cabeçalho com botão Hamburger -->
         <div class="config-cabecalho-moderno">
           <button class="btn-menu-hamburger" type="button" onclick="alternarDrawerMenu()">&#9776;</button>
           <div class="config-header-textos">
@@ -719,6 +772,9 @@
 
         <!-- Drawer Lateral do Hamburger Menu -->
         <div id="drawer-menu-admin" class="drawer-menu-admin">
+          <button id="menu-item-unidade" class="item-menu-drawer" type="button" onclick="selecionarSecaoMenu('unidade', 'Unidade & Instalação')">
+            &#127970; Unidade &amp; Instalação
+          </button>
           <button id="menu-item-identidade" class="item-menu-drawer drawer-ativo" type="button" onclick="selecionarSecaoMenu('identidade', 'Identidade & Cores')">
             &#127912; Identidade &amp; Cores
           </button>
@@ -739,11 +795,39 @@
         <!-- Conteúdo Scrollável -->
         <div class="config-conteudo-scroll" onclick="fecharDrawerSeAberto()">
           
+          <!-- SEÇÃO 0: UNIDADE & INSTALAÇÃO (CÓDIGO DE 6 DÍGITOS) -->
+          <div id="secao-cfg-unidade" class="painel-secao-conteudo">
+            <div class="card-config-moderno">
+              <h4>Terminal Vinculado</h4>
+              <p class="descricao-card">Este tablet está associado a uma unidade registrada no Google Sheets.</p>
+              
+              <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 18px; margin-bottom: 20px;">
+                <div style="font-size: 14px; color: #166534;">CÓDIGO DA UNIDADE (6 DÍGITOS):</div>
+                <div id="cfg-display-codigo-unidade" style="font-size: 28px; font-weight: bold; color: #166534; letter-spacing: 4px;">------</div>
+                <div id="cfg-display-nome-unidade" style="font-size: 17px; font-weight: bold; color: #15803d; margin-top: 6px;">Carregando...</div>
+              </div>
+
+              <div class="linha-campo-form">
+                <label class="rotulo-campo-admin">URL da API Google Apps Script:</label>
+                <input id="cfg-api-url" type="text" class="input-admin-moderno" placeholder="https://script.google.com/macros/s/.../exec" />
+              </div>
+
+              <div>
+                <button type="button" class="btn-secundario-admin" style="color: #dc2626; border-color: #fca5a5;" onclick="desvincularUnidadeTablet()">
+                  Desvincular Este Tablet (Trocar Código)
+                </button>
+                <a id="link-planilha-unidades" class="btn-secundario-admin btn-azul-admin" href="#" target="_blank">
+                  &#128196; Ver Lista de Unidades na Planilha
+                </a>
+              </div>
+            </div>
+          </div>
+
           <!-- SEÇÃO 1: IDENTIDADE & CORES -->
           <div id="secao-cfg-identidade" class="painel-secao-conteudo secao-ativa">
             <div class="card-config-moderno">
               <h4>Cor dos Botões de Ação</h4>
-              <p class="descricao-card">Escolha a cor principal dos botões interativos.</p>
+              <p class="descricao-card">Escolha a cor principal dos botões interativos desta unidade.</p>
               
               <div class="linha-campo-form">
                 <input id="cfg-cor-botao" type="text" class="input-admin-moderno" style="width: 170px; display: inline-block; vertical-align: middle;" value="#0284c7" />
@@ -798,8 +882,8 @@
           <!-- SEÇÃO 2: PERGUNTAS & ÁUDIOS (DRIVE) -->
           <div id="secao-cfg-perguntas" class="painel-secao-conteudo">
             <div class="card-config-moderno">
-              <h4>Questionário e Opções Flexíveis</h4>
-              <p class="descricao-card">Configure quantas opções cada pergunta terá (ex: 2 para Sim/Não ou 5 para notas completas).</p>
+              <h4>Questionário da Unidade</h4>
+              <p class="descricao-card">As alterações feitas aqui são salvas na nuvem para esta unidade.</p>
               
               <div id="lista-perguntas-edicao"></div>
 
@@ -828,28 +912,22 @@
           <!-- SEÇÃO 4: SENHA & SEGURANÇA (PLANILHA) -->
           <div id="secao-cfg-seguranca" class="painel-secao-conteudo">
             <div class="card-config-moderno">
-              <h4>Senha do Painel Administrativo</h4>
-              <p class="descricao-card">Você pode alterar a senha digitando abaixo ou editando a célula <strong>B2</strong> na aba <strong>Configurações</strong> da sua Planilha Google.</p>
+              <h4>Senha Administrativa da Unidade</h4>
+              <p class="descricao-card">Senha vinculada à linha desta unidade na aba <strong>Unidades</strong> da Planilha Google.</p>
               
               <div class="linha-campo-form">
-                <label class="rotulo-campo-admin">Senha de Acesso (Célula B2 da Planilha):</label>
+                <label class="rotulo-campo-admin">Senha de Acesso do Totem:</label>
                 <input id="cfg-senha-admin" type="text" class="input-admin-moderno" style="max-width: 260px; font-size: 22px; font-weight: bold; letter-spacing: 3px; color: #0284c7;" value="1234" />
               </div>
             </div>
 
             <div class="card-config-moderno" style="background-color: #f0fdf4; border: 1px solid #bbf7d0;">
-              <h4 style="color: #166534;">Como alterar a senha diretamente na Planilha</h4>
+              <h4 style="color: #166534;">Alteração Centralizada na Planilha</h4>
               <p class="descricao-card" style="color: #15803d; margin-bottom: 12px;">
-                A senha é mantida no Google Sheets para que você possa alterá-la de qualquer lugar (computador ou celular) sem precisar acessar fisicamente o totem.
+                Você também pode alterar a senha abrindo a aba <strong>Unidades</strong> da planilha e editando a coluna <strong>"Senha Admin do Totem"</strong> correspondente a este código.
               </p>
-              <div style="font-size: 14px; color: #166534; line-height: 1.6; margin-bottom: 16px;">
-                1. Toque no botão abaixo para abrir a Planilha do Google.<br>
-                2. Selecione a aba chamada <strong>"Configurações"</strong> no rodapé da planilha.<br>
-                3. Altere o valor na célula <strong>B2</strong> (marcada em destaque amarelo).<br>
-                <em>Pronto! O tablet passa a exigir a nova senha imediatamente.</em>
-              </div>
               <a id="link-planilha-google-senha" class="btn-secundario-admin btn-azul-admin" style="font-size: 14px; padding: 12px 20px; display:inline-block;" href="#" target="_blank">
-                &#128196; Abrir Aba de Configurações na Planilha
+                &#128196; Abrir Aba Unidades na Planilha
               </a>
             </div>
           </div>
@@ -858,7 +936,7 @@
           <div id="secao-cfg-nuvem" class="painel-secao-conteudo">
             <div class="card-config-moderno">
               <h4>Conexão em Tempo Real com o Google</h4>
-              <p class="descricao-card">As avaliações são enviadas para a Planilha do Google Sheets gerada pelo Apps Script.</p>
+              <p class="descricao-card">Todas as avaliações desta unidade são enviadas com o identificador do local.</p>
               
               <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 18px; margin-bottom: 20px;">
                 <div id="status-conexao-nuvem" style="font-size: 18px; font-weight: bold; color: #166534;">Conectado ao Google Workspace</div>
@@ -876,25 +954,21 @@
             </div>
 
             <div class="card-config-moderno">
-              <h4>Sincronização do Armazenamento Local</h4>
-              <p class="descricao-card">Caso o Wi-Fi oscile, as avaliações são retidas no tablet e podem ser reenviadas.</p>
+              <h4>Sincronização Offline</h4>
+              <p class="descricao-card">Caso a rede oscile, as avaliações são salvas na memória local e reenviadas.</p>
               <button class="btn-secundario-admin" type="button" onclick="sincronizarFilaPendente()">
                 &#128257; Sincronizar Fila Offline Agora
-              </button>
-              <button class="btn-secundario-admin" style="color: #dc2626; border-color: #fca5a5;" type="button" onclick="limparFilaLocal()">
-                Esvaziar Fila Local
               </button>
             </div>
           </div>
 
         </div>
 
-        <!-- Rodapé do Modal com Assinatura Iniciativa DOCA -->
         <div class="config-rodape-moderno">
           <div class="rodape-assinatura-doca">Uma solução Iniciativa DOCA - 2026</div>
           <div class="rodape-botoes-direita">
             <button class="btn-fechar-dialogo" type="button" onclick="fecharModalConfig()">Cancelar</button>
-            <button class="btn-salvar-dialogo" type="button" onclick="salvarConfiguracoesAdmin()">Salvar e Aplicar</button>
+            <button class="btn-salvar-dialogo" type="button" onclick="salvarConfiguracoesAdmin()">Salvar na Nuvem</button>
           </div>
         </div>
 
@@ -906,13 +980,71 @@
   </div>
 
   <script>
-    /*
-     * SISTEMA DE TOTEM - COMPATÍVEL COM ANDROID 4 E WEBKIT LEGADO
-     * Pré-carregamento de áudio ativo para reprodução instantânea (Cache).
-     * Sincronização da senha com a aba 'Configurações' do Google Sheets.
-     */
+    /* ==========================================================================
+     *  CONFIGURAÇÃO DA API GOOGLE APPS SCRIPT (GITHUB PAGES)
+     *  Cole a URL da sua implantação (que termina em /exec) entre as aspas abaixo:
+     * ========================================================================== */
+    var URL_API_PADRAO = ""; 
+    // Exemplo: var URL_API_PADRAO = "https://script.google.com/macros/s/AKfycby.../exec";
+
+    function obterUrlApi() {
+      var salva = window.localStorage.getItem('totem_api_url');
+      if (salva && salva.trim() !== '') return salva.trim();
+      return URL_API_PADRAO;
+    }
+
+    function salvarUrlApi(url) {
+      if (url && url.trim() !== '') {
+        window.localStorage.setItem('totem_api_url', url.trim());
+      }
+    }
+
+    function chamarApiGAS(acao, dados, callbackSucesso, callbackErro) {
+      var url = obterUrlApi();
+      if (!url) {
+        if (callbackErro) callbackErro({ mensagem: "URL da API Google Apps Script não configurada." });
+        return;
+      }
+
+      var payload = {
+        acao: acao,
+        dados: dados || {}
+      };
+
+      try {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", url, true);
+        // text/plain previne que o navegador envie requisição preflight OPTIONS no Android 4 / CORS
+        xhr.setRequestHeader("Content-Type", "text/plain;charset=utf-8");
+
+        xhr.onreadystatechange = function() {
+          if (xhr.readyState === 4) {
+            if (xhr.status >= 200 && xhr.status < 400) {
+              try {
+                var json = JSON.parse(xhr.responseText);
+                if (callbackSucesso) callbackSucesso(json);
+              } catch (e) {
+                if (callbackErro) callbackErro({ mensagem: "Erro ao processar resposta do servidor." });
+              }
+            } else {
+              if (callbackErro) callbackErro({ mensagem: "Falha na comunicação com o servidor (" + xhr.status + ")." });
+            }
+          }
+        };
+
+        xhr.onerror = function() {
+          if (callbackErro) callbackErro({ mensagem: "Erro de conexão de rede ou CORS com a API." });
+        };
+
+        xhr.send(JSON.stringify(payload));
+      } catch (err) {
+        if (callbackErro) callbackErro({ mensagem: "Erro ao disparar requisição: " + err.toString() });
+      }
+    }
 
     var configSistema = {
+      codigoUnidade: "",
+      nomeUnidade: "",
       escalaFonte: 100,
       senhaAdmin: "1234",
       corFundo: "#f4f6f9",
@@ -928,6 +1060,8 @@
     var respostaSelecionada = null;
     var avaliacaoAtual = {
       data_hora: "",
+      codigoUnidade: "",
+      nomeUnidade: "",
       respostas: []
     };
 
@@ -976,9 +1110,17 @@
       return arr;
     }
 
-    function carregarDadosDoBackend() {
+    function inicializarSistemaTotem() {
+      var codigoSalvo = window.localStorage.getItem('totem_codigo_unidade');
+      var urlSalva = obterUrlApi();
+
+      if (!codigoSalvo || !urlSalva) {
+        abrirModalAtivacao();
+        return;
+      }
+
       try {
-        var cache = window.localStorage.getItem('config_totem_appscript');
+        var cache = window.localStorage.getItem('config_totem_appscript_' + codigoSalvo);
         if (cache) {
           configSistema = JSON.parse(cache);
           for (var k = 0; k < configSistema.perguntas.length; k++) {
@@ -991,28 +1133,111 @@
         }
       } catch (e) {}
 
-      if (typeof google !== 'undefined' && google.script && google.script.run) {
-        google.script.run
-          .withSuccessHandler(function(remoto) {
-            if (remoto && remoto.perguntas && remoto.perguntas.length) {
-              for (var i = 0; i < remoto.perguntas.length; i++) {
-                normalizarOpcoesPergunta(remoto.perguntas[i]);
-              }
-              configSistema = remoto;
-              perguntas = configSistema.perguntas;
-              try {
-                window.localStorage.setItem('config_totem_appscript', JSON.stringify(remoto));
-              } catch (e) {}
-              aplicarTamanhoFonte(configSistema.escalaFonte || 100);
-              aplicarConfiguracoesVisuais();
-              preCarregarAudiosEmCache();
+      sincronizarComBackendGoogle(codigoSalvo);
+    }
+
+    function sincronizarComBackendGoogle(codigo) {
+      chamarApiGAS(
+        "validarCodigo",
+        { codigo: codigo },
+        function(res) {
+          if (res && res.valido && res.config) {
+            configSistema = res.config;
+            configSistema.codigoUnidade = res.codigo;
+            configSistema.nomeUnidade = res.nome;
+            for (var i = 0; i < configSistema.perguntas.length; i++) {
+              normalizarOpcoesPergunta(configSistema.perguntas[i]);
             }
-          })
-          .withFailureHandler(function() {
-            mostrarMensagem("Aviso: Operando em modo offline.");
-          })
-          .obterConfiguracoesIniciais();
+            perguntas = configSistema.perguntas;
+
+            try {
+              window.localStorage.setItem('totem_codigo_unidade', res.codigo);
+              window.localStorage.setItem('config_totem_appscript_' + res.codigo, JSON.stringify(configSistema));
+            } catch (e) {}
+
+            aplicarTamanhoFonte(configSistema.escalaFonte || 100);
+            aplicarConfiguracoesVisuais();
+            preCarregarAudiosEmCache();
+          } else if (res && !res.valido) {
+            mostrarMensagem(res.mensagem || "Código não reconhecido na nuvem.");
+            abrirModalAtivacao();
+          }
+        },
+        function() {
+          mostrarMensagem("Aviso: Operando em modo offline com a unidade " + codigo);
+        }
+      );
+    }
+
+    function abrirModalAtivacao() {
+      var modal = document.getElementById('modal-ativacao-unidade');
+      var input = document.getElementById('input-codigo-unidade');
+      var inputUrl = document.getElementById('input-api-url-ativacao');
+      var msg = document.getElementById('msg-erro-ativacao');
+      if (msg) msg.innerHTML = '';
+      if (input) input.value = window.localStorage.getItem('totem_codigo_unidade') || '';
+      if (inputUrl) inputUrl.value = obterUrlApi() || '';
+      if (modal) modal.style.display = 'block';
+    }
+
+    function fecharModalAtivacao() {
+      var modal = document.getElementById('modal-ativacao-unidade');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function confirmarAtivacaoUnidade() {
+      var input = document.getElementById('input-codigo-unidade');
+      var inputUrl = document.getElementById('input-api-url-ativacao');
+      var msg = document.getElementById('msg-erro-ativacao');
+      var codigo = input ? input.value.trim() : '';
+      var urlDigitada = inputUrl ? inputUrl.value.trim() : '';
+
+      if (!urlDigitada) {
+        if (msg) msg.innerHTML = 'Por favor, informe a URL da sua implantação do Apps Script.';
+        return;
       }
+      salvarUrlApi(urlDigitada);
+
+      if (!codigo || codigo.length < 6) {
+        if (msg) msg.innerHTML = 'Por favor, digite o código de 6 dígitos.';
+        return;
+      }
+
+      if (msg) msg.innerHTML = 'Consultando Planilha Google...';
+
+      chamarApiGAS(
+        "validarCodigo",
+        { codigo: codigo },
+        function(res) {
+          if (res && res.valido) {
+            fecharModalAtivacao();
+            configSistema = res.config;
+            configSistema.codigoUnidade = res.codigo;
+            configSistema.nomeUnidade = res.nome;
+            perguntas = configSistema.perguntas;
+
+            window.localStorage.setItem('totem_codigo_unidade', res.codigo);
+            window.localStorage.setItem('config_totem_appscript_' + res.codigo, JSON.stringify(configSistema));
+
+            aplicarTamanhoFonte(configSistema.escalaFonte || 100);
+            aplicarConfiguracoesVisuais();
+            preCarregarAudiosEmCache();
+            mostrarMensagem("Totem vinculado com sucesso: " + res.nome);
+          } else {
+            if (msg) msg.innerHTML = (res && res.mensagem) ? res.mensagem : 'Código incorreto.';
+          }
+        },
+        function(erro) {
+          if (msg) msg.innerHTML = (erro && erro.mensagem) ? erro.mensagem : 'Erro ao conectar à API do Google.';
+        }
+      );
+    }
+
+    function desvincularUnidadeTablet() {
+      window.localStorage.removeItem('totem_codigo_unidade');
+      fecharModalConfig();
+      abrirModalAtivacao();
+      mostrarMensagem("Terminal desvinculado. Digite o novo código de 6 dígitos.");
     }
 
     function aplicarConfiguracoesVisuais() {
@@ -1044,6 +1269,16 @@
         elSubtitulo.innerHTML = subFormatado;
       }
 
+      var labelUnidade = document.getElementById('label-unidade-topo');
+      if (labelUnidade) {
+        if (configSistema.codigoUnidade) {
+          labelUnidade.innerHTML = (configSistema.nomeUnidade || 'Unidade') + ' (' + configSistema.codigoUnidade + ')';
+          labelUnidade.style.display = 'inline-block';
+        } else {
+          labelUnidade.style.display = 'none';
+        }
+      }
+
       var blocoLogo = document.getElementById('bloco-logo-inicial');
       var imgLogo = document.getElementById('img-logo-inicial');
       if (blocoLogo && imgLogo) {
@@ -1069,6 +1304,11 @@
     }
 
     function iniciarPesquisa() {
+      if (!configSistema.codigoUnidade) {
+        abrirModalAtivacao();
+        return;
+      }
+
       if (!perguntas || perguntas.length === 0) {
         mostrarMensagem('Nenhuma pergunta configurada.');
         return;
@@ -1078,6 +1318,8 @@
       respostaSelecionada = null;
       avaliacaoAtual = {
         data_hora: obterDataHoraAtual(),
+        codigoUnidade: configSistema.codigoUnidade,
+        nomeUnidade: configSistema.nomeUnidade,
         respostas: []
       };
 
@@ -1185,13 +1427,16 @@
     function finalizarPesquisa() {
       guardarFilaLocal(avaliacaoAtual);
 
-      if (typeof google !== 'undefined' && google.script && google.script.run) {
-        google.script.run
-          .withSuccessHandler(function() {
-            removerItemFilaLocal(avaliacaoAtual.data_hora);
-          })
-          .registrarAvaliacao(avaliacaoAtual);
-      }
+      chamarApiGAS(
+        "registrarAvaliacao",
+        { avaliacao: avaliacaoAtual },
+        function() {
+          removerItemFilaLocal(avaliacaoAtual.data_hora);
+        },
+        function() {
+          mostrarMensagem("Avaliação armazenada na fila offline do tablet.");
+        }
+      );
 
       document.getElementById('secao-pergunta').className = 'secao';
       document.getElementById('secao-final').className = 'secao ativa';
@@ -1267,6 +1512,10 @@
 
     function abrirModalSenha() {
       var input = document.getElementById('input-senha-tentativa');
+      var sub = document.getElementById('subtitulo-senha-modal');
+      if (sub) {
+        sub.innerHTML = 'Senha da Unidade ' + (configSistema.codigoUnidade || 'Geral') + ':';
+      }
       if (input) input.value = '';
       document.getElementById('modal-senha-admin').style.display = 'block';
     }
@@ -1275,9 +1524,6 @@
       document.getElementById('modal-senha-admin').style.display = 'none';
     }
 
-    /**
-     * Valida a senha comparando primeiro o cache local e, caso discorde, consultando a Planilha Google em tempo real.
-     */
     function confirmarSenhaAdmin() {
       var input = document.getElementById('input-senha-tentativa');
       var digitada = input ? input.value.trim() : '';
@@ -1286,40 +1532,35 @@
         return;
       }
 
-      // 1. Verificação rápida com o valor armazenado localmente
       if (digitada === String(configSistema.senhaAdmin).trim()) {
         fecharModalSenha();
         abrirModalConfig();
         return;
       }
 
-      // 2. Se a senha local falhar ou tiver sido alterada na Planilha, consulta a nuvem em tempo real
-      if (typeof google !== 'undefined' && google.script && google.script.run) {
-        mostrarMensagem('Validando senha com a Planilha Google...');
-        google.script.run
-          .withSuccessHandler(function(res) {
-            if (res && res.valida) {
-              configSistema.senhaAdmin = digitada;
-              try {
-                window.localStorage.setItem('config_totem_appscript', JSON.stringify(configSistema));
-              } catch (e) {}
-              fecharModalSenha();
-              abrirModalConfig();
-            } else {
-              mostrarMensagem('Senha incorreta. Verifique na célula B2 da Planilha.');
-            }
-          })
-          .withFailureHandler(function() {
-            mostrarMensagem('Senha incorreta. Não foi possível conectar ao Google.');
-          })
-          .validarSenhaPlanilha(digitada);
-      } else {
-        mostrarMensagem('Senha incorreta.');
-      }
+      mostrarMensagem('Validando senha com a Planilha Google...');
+      chamarApiGAS(
+        "validarSenha",
+        { senha: digitada, codigo: configSistema.codigoUnidade },
+        function(res) {
+          if (res && res.valida) {
+            configSistema.senhaAdmin = digitada;
+            fecharModalSenha();
+            abrirModalConfig();
+          } else {
+            mostrarMensagem('Senha incorreta.');
+          }
+        },
+        function() {
+          mostrarMensagem('Falha ao validar com a nuvem.');
+        }
+      );
     }
 
-    /* Modal de Configuração com Hamburger Menu */
     function abrirModalConfig() {
+      document.getElementById('cfg-display-codigo-unidade').innerHTML = configSistema.codigoUnidade || '------';
+      document.getElementById('cfg-display-nome-unidade').innerHTML = configSistema.nomeUnidade || 'Não vinculada';
+      document.getElementById('cfg-api-url').value = obterUrlApi();
       document.getElementById('cfg-cor-botao').value = configSistema.corBotao || '#0284c7';
       document.getElementById('cfg-picker-botao').value = configSistema.corBotao || '#0284c7';
       document.getElementById('cfg-cor-fundo').value = configSistema.corFundo || '#f4f6f9';
@@ -1330,7 +1571,7 @@
       document.getElementById('cfg-senha-admin').value = configSistema.senhaAdmin || '1234';
 
       montarFormularioEdicaoPerguntas();
-      selecionarSecaoMenu('identidade', 'Identidade & Cores');
+      selecionarSecaoMenu('unidade', 'Unidade & Instalação');
       atualizarLinksGoogleNuvem();
 
       document.getElementById('modal-configuracoes').style.display = 'block';
@@ -1353,7 +1594,7 @@
     }
 
     function selecionarSecaoMenu(chaveSecao, tituloLegivel) {
-      var secoes = ['identidade', 'perguntas', 'acessibilidade', 'seguranca', 'nuvem'];
+      var secoes = ['unidade', 'identidade', 'perguntas', 'acessibilidade', 'seguranca', 'nuvem'];
       for (var i = 0; i < secoes.length; i++) {
         var s = secoes[i];
         var itemBtn = document.getElementById('menu-item-' + s);
@@ -1366,33 +1607,35 @@
       if (elTitulo) elTitulo.innerHTML = tituloLegivel;
 
       fecharDrawerSeAberto();
-      if (chaveSecao === 'nuvem' || chaveSecao === 'seguranca') atualizarLinksGoogleNuvem();
+      if (chaveSecao === 'nuvem' || chaveSecao === 'seguranca' || chaveSecao === 'unidade') atualizarLinksGoogleNuvem();
     }
 
     function atualizarLinksGoogleNuvem() {
-      if (typeof google !== 'undefined' && google.script && google.script.run) {
-        google.script.run
-          .withSuccessHandler(function(info) {
-            if (info) {
-              var elLinkP = document.getElementById('link-planilha-google');
-              var elLinkD = document.getElementById('link-pasta-drive');
-              var elLinkPS = document.getElementById('link-planilha-google-senha');
-              var elCont = document.getElementById('contador-registros-nuvem');
+      chamarApiGAS(
+        "obterLinks",
+        { codigo: configSistema.codigoUnidade },
+        function(info) {
+          if (info) {
+            var elLinkP = document.getElementById('link-planilha-google');
+            var elLinkD = document.getElementById('link-pasta-drive');
+            var elLinkPS = document.getElementById('link-planilha-google-senha');
+            var elLinkU = document.getElementById('link-planilha-unidades');
+            var elCont = document.getElementById('contador-registros-nuvem');
 
-              if (elLinkP && info.urlPlanilha) elLinkP.href = info.urlPlanilha;
-              if (elLinkPS && info.urlPlanilha) elLinkPS.href = info.urlPlanilha;
-              if (elLinkD && info.urlPastaDrive) elLinkD.href = info.urlPastaDrive;
-              if (elCont) elCont.innerHTML = 'Total registrado no Sheets: ' + info.totalRespostas + ' avaliação(ões)';
+            if (elLinkP && info.urlPlanilha) elLinkP.href = info.urlPlanilha;
+            if (elLinkPS && info.urlPlanilha) elLinkPS.href = info.urlPlanilha;
+            if (elLinkU && info.urlPlanilha) elLinkU.href = info.urlPlanilha;
+            if (elLinkD && info.urlPastaDrive) elLinkD.href = info.urlPastaDrive;
+            if (elCont) elCont.innerHTML = 'Total registrado no Sheets: ' + info.totalRespostas + ' avaliação(ões)';
 
-              if (info.senhaAtual) {
-                configSistema.senhaAdmin = info.senhaAtual;
-                var campoSenha = document.getElementById('cfg-senha-admin');
-                if (campoSenha) campoSenha.value = info.senhaAtual;
-              }
+            if (info.senhaAtual) {
+              configSistema.senhaAdmin = info.senhaAtual;
+              var campoSenha = document.getElementById('cfg-senha-admin');
+              if (campoSenha) campoSenha.value = info.senhaAtual;
             }
-          })
-          .obterLinksSistema();
-      }
+          }
+        }
+      );
     }
 
     function sincronizarCorBotaoPicker(hex) {
@@ -1461,7 +1704,7 @@
         html += '</div>';
 
         html += '<div class="faixa-audio-config">';
-        html += '<label class="rotulo-campo-admin">Áudio no Drive ou Arquivo:</label>';
+        html += '<label class="rotulo-campo-admin">Áudio no Drive ou Link Web:</label>';
         html += '<input id="cfg-aud-' + i + '" class="input-admin-moderno" style="margin-bottom:8px;" type="text" placeholder="https://..." value="' + audioAtual + '" />';
         html += '<div>';
         html += '<input id="cfg-aud-file-' + i + '" type="file" accept="audio/*" style="display:none;" onchange="enviarAudioParaGoogleDrive(this, ' + i + ')" />';
@@ -1596,22 +1839,26 @@
 
       var reader = new FileReader();
       reader.onload = function(e) {
-        if (typeof google !== 'undefined' && google.script && google.script.run) {
-          google.script.run
-            .withSuccessHandler(function(res) {
-              if (res && res.sucesso) {
-                configSistema.perguntas[indice].audio = res.url;
-                var campo = document.getElementById('cfg-aud-' + indice);
-                if (campo) campo.value = res.url;
-                preCarregarAudiosEmCache();
-                mostrarMensagem('Áudio salvo no Google Drive com sucesso!');
-              }
-            })
-            .withFailureHandler(function() {
-              mostrarMensagem('Erro ao enviar áudio para o Drive.');
-            })
-            .uploadMidiaDrive(file.name, e.target.result, file.type || 'audio/mp3');
-        }
+        chamarApiGAS(
+          "uploadMidia",
+          {
+            nome: file.name,
+            base64: e.target.result,
+            tipo: file.type || 'audio/mp3'
+          },
+          function(res) {
+            if (res && res.sucesso) {
+              configSistema.perguntas[indice].audio = res.url;
+              var campo = document.getElementById('cfg-aud-' + indice);
+              if (campo) campo.value = res.url;
+              preCarregarAudiosEmCache();
+              mostrarMensagem('Áudio salvo no Google Drive com sucesso!');
+            }
+          },
+          function() {
+            mostrarMensagem('Erro ao enviar áudio para o Drive.');
+          }
+        );
       };
       reader.readAsDataURL(file);
     }
@@ -1623,21 +1870,25 @@
 
       var reader = new FileReader();
       reader.onload = function(e) {
-        if (typeof google !== 'undefined' && google.script && google.script.run) {
-          google.script.run
-            .withSuccessHandler(function(res) {
-              if (res && res.sucesso) {
-                var campo = document.getElementById('cfg-logo-url');
-                if (campo) campo.value = res.url;
-                configSistema.logoUrl = res.url;
-                mostrarMensagem('Logo salvo no Drive com sucesso!');
-              }
-            })
-            .withFailureHandler(function() {
-              mostrarMensagem('Erro ao enviar logo para o Drive.');
-            })
-            .uploadMidiaDrive(file.name, e.target.result, file.type || 'image/png');
-        }
+        chamarApiGAS(
+          "uploadMidia",
+          {
+            nome: file.name,
+            base64: e.target.result,
+            tipo: file.type || 'image/png'
+          },
+          function(res) {
+            if (res && res.sucesso) {
+              var campo = document.getElementById('cfg-logo-url');
+              if (campo) campo.value = res.url;
+              configSistema.logoUrl = res.url;
+              mostrarMensagem('Logo salvo no Drive com sucesso!');
+            }
+          },
+          function() {
+            mostrarMensagem('Erro ao enviar logo para o Drive.');
+          }
+        );
       };
       reader.readAsDataURL(file);
     }
@@ -1650,6 +1901,11 @@
 
     function salvarConfiguracoesAdmin() {
       sincronizarEstadoEdicaoPerguntas();
+
+      var inputUrlCfg = document.getElementById('cfg-api-url');
+      if (inputUrlCfg && inputUrlCfg.value.trim() !== '') {
+        salvarUrlApi(inputUrlCfg.value.trim());
+      }
 
       configSistema.corBotao = document.getElementById('cfg-cor-botao').value || '#0284c7';
       configSistema.corFundo = document.getElementById('cfg-cor-fundo').value || '#f4f6f9';
@@ -1665,21 +1921,24 @@
       perguntas = configSistema.perguntas;
 
       try {
-        window.localStorage.setItem('config_totem_appscript', JSON.stringify(configSistema));
+        if (configSistema.codigoUnidade) {
+          window.localStorage.setItem('config_totem_appscript_' + configSistema.codigoUnidade, JSON.stringify(configSistema));
+        }
       } catch (e) {}
 
       preCarregarAudiosEmCache();
 
-      if (typeof google !== 'undefined' && google.script && google.script.run) {
-        google.script.run
-          .withSuccessHandler(function(res) {
-            mostrarMensagem(res.mensagem || 'Configurações salvas e sincronizadas!');
-          })
-          .withFailureHandler(function() {
-            mostrarMensagem('Salvo localmente (erro ao sincronizar na nuvem).');
-          })
-          .salvarConfiguracoesBackend(configSistema);
-      }
+      mostrarMensagem('Salvando alterações no Google Drive/Sheets...');
+      chamarApiGAS(
+        "salvarConfiguracoes",
+        { config: configSistema },
+        function(res) {
+          mostrarMensagem(res.mensagem || 'Configurações salvas e sincronizadas!');
+        },
+        function() {
+          mostrarMensagem('Salvo apenas localmente (falha de rede).');
+        }
+      );
 
       aplicarConfiguracoesVisuais();
       fecharModalConfig();
@@ -1701,37 +1960,29 @@
         var fila = JSON.parse(armazenado);
         mostrarMensagem('Enviando ' + fila.length + ' avaliação(ões) para o Sheets...');
 
-        if (typeof google !== 'undefined' && google.script && google.script.run) {
-          for (var i = 0; i < fila.length; i++) {
-            (function(item) {
-              google.script.run
-                .withSuccessHandler(function() {
-                  removerItemFilaLocal(item.data_hora);
-                })
-                .registrarAvaliacao(item);
-            })(fila[i]);
-          }
-          setTimeout(function() {
-            mostrarMensagem('Sincronização concluída!');
-            atualizarLinksGoogleNuvem();
-          }, 2000);
+        for (var i = 0; i < fila.length; i++) {
+          (function(item) {
+            chamarApiGAS(
+              "registrarAvaliacao",
+              { avaliacao: item },
+              function() {
+                removerItemFilaLocal(item.data_hora);
+              }
+            );
+          })(fila[i]);
         }
+        setTimeout(function() {
+          mostrarMensagem('Sincronização concluída!');
+          atualizarLinksGoogleNuvem();
+        }, 2000);
       } catch (e) {
         mostrarMensagem('Erro ao ler fila pendente.');
       }
     }
 
-    function limparFilaLocal() {
-      try {
-        window.localStorage.removeItem('avaliacoes_fila_pendente');
-        mostrarMensagem('Fila local limpa com sucesso.');
-      } catch (e) {}
-    }
-
     window.onload = function() {
-      carregarDadosDoBackend();
+      inicializarSistemaTotem();
     };
   </script>
 </body>
 </html>
-```
