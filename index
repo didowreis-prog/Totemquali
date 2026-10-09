@@ -982,15 +982,15 @@
   <script>
     /* ==========================================================================
      *  CONFIGURAÇÃO DA API GOOGLE APPS SCRIPT (GITHUB PAGES)
-     *  Cole a URL da sua implantação (que termina em /exec) entre as aspas abaixo:
+     *  URL oficial da sua implantação no Google Apps Script:
      * ========================================================================== */
-    var URL_API_PADRAO = ""; 
-    // Exemplo: var URL_API_PADRAO = "https://script.google.com/macros/s/AKfycby.../exec";
+    var URL_API_PADRAO = "https://script.google.com/macros/s/AKfycbyKhI02D3sFNrSAUSjAk3QzmYfg1HyXt4mEi6RwnuFoIVnT5kbxgOxqUn4ct3A5dGiCiQ/exec"; 
 
     function obterUrlApi() {
+      if (URL_API_PADRAO && URL_API_PADRAO.trim() !== '') return URL_API_PADRAO.trim();
       var salva = window.localStorage.getItem('totem_api_url');
       if (salva && salva.trim() !== '') return salva.trim();
-      return URL_API_PADRAO;
+      return "";
     }
 
     function salvarUrlApi(url) {
